@@ -1,7 +1,7 @@
 // Application configuration
 export const config = {
   app: {
-    name: 'Travel With Muchina',
+    name: ' Muchina Malomba',
     url: import.meta.env.VITE_APP_URL || 'http://localhost:5173',
     description: 'Explore Kenya & East Africa with Muchina Malomba',
   },
@@ -21,12 +21,10 @@ export const config = {
   },
   social: {
     instagram: 'https://instagram.com/muchinaMalomba',
-    twitter: 'https://twitter.com/MuchinaMalomba',
-    facebook: 'https://facebook.com/TravelWithMuchina',
+    facebook: 'https://facebook.com/MuchinaMalomba',
   },
 };
 
-// Validate required environment variables
 const requiredEnvVars = [
   'VITE_SUPABASE_URL',
   'VITE_SUPABASE_ANON_KEY',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Camera, Heart, Share2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Heart, Share2 } from 'lucide-react';
 
 interface Photo {
   id: string;
@@ -68,7 +68,6 @@ export function PhotoGallery({ photos, onClose, initialPhotoIndex = 0 }: PhotoGa
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-center h-full">
         <div className="grid lg:grid-cols-3 gap-8 items-center h-full max-h-[90vh]">
-          {/* Main Image */}
           <div className="lg:col-span-2 flex items-center justify-center">
             <div className="relative max-w-4xl max-h-[80vh]">
               <img
@@ -104,7 +103,6 @@ export function PhotoGallery({ photos, onClose, initialPhotoIndex = 0 }: PhotoGa
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex space-x-4">
               <button className="flex items-center space-x-2 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all duration-300">
                 <Heart size={16} />
@@ -140,7 +138,6 @@ export function PhotoGallery({ photos, onClose, initialPhotoIndex = 0 }: PhotoGa
               </div>
             </div>
 
-            {/* Photo Counter */}
             <div className="text-center text-gray-400">
               {currentIndex + 1} of {photos.length}
             </div>

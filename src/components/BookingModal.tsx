@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from 'react';
 import { X, CreditCard, Smartphone, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,7 +8,7 @@ import { supabase, Trip } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { StripePayment } from './StripePayment';
 import { MpesaPayment } from './MpesaPayment';
-import { ImageUpload, ImagePreview } from './ImageUpload';
+// import { ImageUpload, ImagePreview } from './ImageUpload';
 import toast from 'react-hot-toast';
 
 interface BookingModalProps {
@@ -35,7 +36,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
   const { user, profile } = useAuth();
 
   const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
-    resolver: yupResolver(bookingSchema),
+    resolver: yupResolver(bookingSchema) as any,
     defaultValues: {
       fullName: profile?.full_name || '',
       email: profile?.email || '',
@@ -111,7 +112,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
     }
   };
 
-  const handlePayment = async () => {
+  const handleStripeSuccess = async () => {
     setLoading(true);
     try {
       // Simulate payment processing

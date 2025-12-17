@@ -1,4 +1,3 @@
-import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
 interface SEOHeadProps {
@@ -18,13 +17,13 @@ export function SEOHead({
   description = 'Join Muchina Malomba, Kenya\'s premier radio host and travel curator, on unforgettable adventures across East Africa. Book trips, shop travel gear, and connect with fellow travelers.',
   keywords = 'Kenya travel, East Africa tours, safari adventures, travel with Muchina, Kenyan radio host, travel gear, adventure trips, Maasai Mara, Mount Kenya, Diani Beach',
   image = 'https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop',
-  url = 'https://travelwithmuchina.com',
+  url = 'https://muchinamalomba.co.ke',
   type = 'website',
   author = 'Muchina Malomba',
   publishedTime,
   modifiedTime,
 }: SEOHeadProps) {
-  const fullTitle = title.includes('Travel With Muchina') ? title : `${title} | Travel With Muchina`;
+  const fullTitle = title.includes('Muchina Malomba') ? title : `${title} | Muchina Malomba`;
   const canonicalUrl = `${url}${window.location.pathname}`;
 
   return (
@@ -42,7 +41,7 @@ export function SEOHead({
       <meta property="og:image" content={image} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content={type} />
-      <meta property="og:site_name" content="Travel With Muchina" />
+      <meta property="og:site_name" content="Muchina Malomba" />
       <meta property="og:locale" content="en_US" />
 
       {/* Twitter Card Meta Tags */}
@@ -82,7 +81,7 @@ export function SEOHead({
           "name": "Travel With Muchina",
           "description": description,
           "url": url,
-          "logo": "https://travelwithmuchina.com/logo.png",
+          "logo": "https://muchinamalomba.co.ke/logo.png",
           "image": image,
           "founder": {
             "@type": "Person",
@@ -114,7 +113,6 @@ export function SEOHead({
         })}
       </script>
 
-      {/* Favicon and App Icons */}
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Clock, Star, ArrowRight, ListFilter as Filter, Plus, Share2 } from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
+import { Calendar, MapPin, Star, Users, ArrowRight, ListFilter as Filter } from 'lucide-react';
 import { supabase, Trip } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { BookingModal } from '../components/BookingModal';
-import { TripPlanningModal } from '../components/TripPlanningModal';
-import { InvitationModal } from '../components/InvitationModal';
 import toast from 'react-hot-toast';
 
 export function TripsPage() {
@@ -12,8 +11,6 @@ export function TripsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const [showPlanningModal, setShowPlanningModal] = useState(false);
-  const [showInvitationModal, setShowInvitationModal] = useState(false);
   const [filter, setFilter] = useState<'all' | 'easy' | 'moderate' | 'challenging'>('all');
   const { user } = useAuth();
 
@@ -135,7 +132,7 @@ export function TripsPage() {
                       />
                       <div className="absolute top-4 left-4">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(trip.difficulty_level)}`}>
-                          {trip.difficulty_level?.charAt(0).toUpperCase() + trip.difficulty_level?.slice(1)}
+                          {(trip.difficulty_level ?? 'Unknown').charAt(0).toUpperCase() + (trip.difficulty_level ?? 'Unknown').slice(1)}
                         </span>
                       </div>
                       <div className="absolute top-4 right-4 bg-white bg-opacity-90 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">

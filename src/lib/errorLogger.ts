@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from './supabase';
 
 interface ErrorLogData {
@@ -20,7 +21,6 @@ export const logError = async (error: Error, context?: Partial<ErrorLogData>) =>
       ...context,
     };
 
-    // Log to Supabase
     const { error: logError } = await supabase
       .from('error_logs')
       .insert([errorData]);
@@ -42,8 +42,6 @@ export const logUserAction = async (action: string, details?: Record<string, any
   try {
     console.log(`User action: ${action}`, details);
     
-    // In production, you might want to log user actions to analytics
-    // or a separate logging service
     if (import.meta.env.PROD) {
       // Example: Send to analytics service
       // analytics.track(action, details);

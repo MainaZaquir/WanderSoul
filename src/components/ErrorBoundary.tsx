@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { TriangleAlert as AlertTriangle, RefreshCw, Hop as Home } from 'lucide-react';
 import { logError } from '../lib/errorLogger';
 
@@ -23,10 +23,9 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
     
-    // Log error to our error logging service
     logError(error, {
       errorType: 'React Error Boundary',
-      stackTrace: errorInfo.componentStack,
+      stackTrace: errorInfo.componentStack ?? undefined,
     });
   }
 

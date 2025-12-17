@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, X, CircleAlert as AlertCircle } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import { uploadImage, uploadMultipleImages, STORAGE_BUCKETS } from '../lib/storage';
 import toast from 'react-hot-toast';
 

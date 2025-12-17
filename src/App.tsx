@@ -1,4 +1,3 @@
-import React from 'react';
 import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -9,7 +8,6 @@ import { Layout } from './components/Layout';
 import { CartProvider } from './context/CartContext';
 import { CookieConsent } from './components/CookieConsent';
 
-// Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })));
 const TripsPage = lazy(() => import('./pages/TripsPage').then(module => ({ default: module.TripsPage })));
 const ShopPage = lazy(() => import('./pages/ShopPage').then(module => ({ default: module.ShopPage })));
@@ -18,10 +16,8 @@ const SponsorshipPage = lazy(() => import('./pages/SponsorshipPage').then(module
 const AuthPage = lazy(() => import('./pages/AuthPage').then(module => ({ default: module.AuthPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 
-// Setup global error handling
 setupGlobalErrorHandling();
 
-// Loading component
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>

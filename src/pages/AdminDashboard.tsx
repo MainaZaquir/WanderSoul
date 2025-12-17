@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Users, MapPin, ShoppingBag, MessageSquare, Award, Star, TrendingUp, Calendar, DollarSign, Eye, CreditCard as Edit, Trash2, Plus, ListFilter as Filter, Search, Download } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, MapPin, ShoppingBag, MessageSquare, Award, Star, TrendingUp, Calendar, DollarSign } from 'lucide-react';
 import { supabase, Trip, Product, User, Booking, Order, Review, CommunityPost, Sponsorship } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
@@ -19,13 +19,13 @@ export function AdminDashboard() {
 
   // Data states
   const [users, setUsers] = useState<User[]>([]);
-  const [trips, setTrips] = useState<Trip[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [, setTrips] = useState<Trip[]>([]);
+  const [, setProducts] = useState<Product[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [, setOrders] = useState<Order[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [posts, setPosts] = useState<CommunityPost[]>([]);
-  const [sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
+  const [, setSponsorships] = useState<Sponsorship[]>([]);
 
   useEffect(() => {
     if (profile?.is_admin) {

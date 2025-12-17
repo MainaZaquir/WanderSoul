@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, Camera, Plus, Filter, Search } from 'lucide-react';
 import { supabase, CommunityPost } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -74,7 +75,6 @@ export function CommunityPage() {
         </div>
       </section>
 
-      {/* Filters and Actions */}
       <section className="py-8 bg-white border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">

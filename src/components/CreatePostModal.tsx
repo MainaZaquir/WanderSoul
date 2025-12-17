@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Camera, Upload } from 'lucide-react';
+import { useState } from 'react';
+import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';

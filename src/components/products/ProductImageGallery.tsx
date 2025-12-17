@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn, CircleAlert as AlertCircle } from 'lucide-react';
 
 interface ProductImageGalleryProps {

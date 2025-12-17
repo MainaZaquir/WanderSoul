@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Cookie, X, Shield, Settings } from 'lucide-react';
 import Cookies from 'js-cookie';
 
@@ -30,7 +30,6 @@ export function CookieConsent() {
     Cookies.set('cookie-consent', JSON.stringify(allPreferences), { expires: 365 });
     setShowBanner(false);
     
-    // Initialize analytics and other services
     initializeServices(allPreferences);
   };
 
@@ -39,7 +38,6 @@ export function CookieConsent() {
     setShowBanner(false);
     setShowSettings(false);
     
-    // Initialize only selected services
     initializeServices(preferences);
   };
 
@@ -54,26 +52,19 @@ export function CookieConsent() {
     Cookies.set('cookie-consent', JSON.stringify(minimalPreferences), { expires: 365 });
     setShowBanner(false);
     
-    // Initialize only necessary services
     initializeServices(minimalPreferences);
   };
 
   const initializeServices = (prefs: typeof preferences) => {
-    // Initialize analytics if accepted
     if (prefs.analytics) {
-      // Initialize Google Analytics, etc.
       console.log('Analytics initialized');
     }
     
-    // Initialize marketing tools if accepted
     if (prefs.marketing) {
-      // Initialize Facebook Pixel, etc.
       console.log('Marketing tools initialized');
     }
     
-    // Initialize functional cookies if accepted
     if (prefs.functional) {
-      // Initialize chat widgets, etc.
       console.log('Functional services initialized');
     }
   };

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../lib/supabase';
 
@@ -20,9 +21,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('travel-cart');
     if (savedCart) {
@@ -34,7 +34,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('travel-cart', JSON.stringify(cartItems));
   }, [cartItems]);
@@ -45,13 +44,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const existingItem = prevItems.find(item => item.product.id === product.id);
       
       if (existingItem) {
-        // For digital products, don't increase quantity
         if (product.category === 'digital') {
           setLoading(false);
           return prevItems;
         }
         
-        // For physical products, increase quantity
         const newItems = prevItems.map(item =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + quantity }

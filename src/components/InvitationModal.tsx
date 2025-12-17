@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState } from 'react';
 import { X, Users, Mail, MessageCircle, Copy, Check } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -62,12 +63,9 @@ export function InvitationModal({ trip, onClose, onSuccess }: InvitationModalPro
         return;
       }
 
-      // In production, this would send actual emails
       console.log('Sending invitations to:', emailList);
       console.log('Message:', data.message);
       console.log('Trip:', trip);
-
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       toast.success(`Invitations sent to ${emailList.length} cousin${emailList.length > 1 ? 's' : ''}!`);
@@ -93,7 +91,7 @@ export function InvitationModal({ trip, onClose, onSuccess }: InvitationModalPro
         {/* Header */}
         <div className="flex items-center justify-between p-8 border-b border-gray-100">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">Invite Your Cousins</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Invite Other Cousins</h2>
             <p className="text-gray-600 mt-1">Share this amazing adventure with friends and family</p>
           </div>
           <button

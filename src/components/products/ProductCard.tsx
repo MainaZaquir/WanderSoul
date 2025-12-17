@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Download, MapPin, Clock, Star, Eye } from 'lucide-react';
+
+import { useState } from 'react';
+import { ShoppingCart, Download, MapPin, Clock, Eye } from 'lucide-react';
 import { Product } from '../../types/product';
 import { ProductImageGallery } from './ProductImageGallery';
 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { X, MapPin, Calendar, Users, DollarSign, Camera, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+import { X, MapPin, Calendar, Users, DollarSign, Plus, Trash2 } from 'lucide-react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -17,24 +18,57 @@ const tripSchema = yup.object({
   title: yup.string().required('Trip title is required'),
   description: yup.string().required('Description is required'),
   destination: yup.string().required('Destination is required'),
-  startDate: yup.date().required('Start date is required').min(new Date(), 'Start date must be in the future'),
-  endDate: yup.date().required('End date is required').min(yup.ref('startDate'), 'End date must be after start date'),
-  price: yup.number().required('Price is required').min(0, 'Price must be positive'),
-  maxCapacity: yup.number().required('Max capacity is required').min(1, 'Must allow at least 1 person'),
-  difficultyLevel: yup.string().oneOf(['easy', 'moderate', 'challenging']).required('Difficulty level is required'),
-  highlights: yup.array().of(yup.string().required()).min(1, 'At least one highlight is required'),
-  includes: yup.array().of(yup.string().required()),
-  excludes: yup.array().of(yup.string().required()),
+  startDate: yup
+    .date()
+    .transform((value, originalValue) =>
+      originalValue ? new Date(originalValue) : value
+    )
+    .required('Start date is required')
+    .min(new Date(), 'Start date must be in the future'),
+  endDate: yup
+    .date()
+    .transform((value, originalValue) =>
+      originalValue ? new Date(originalValue) : value
+    )
+    .required('End date is required')
+    .min(yup.ref('startDate'), 'End date must be after start date'),
+  price: yup
+    .number()
+    .typeError('Price must be a number')
+    .required('Price is required')
+    .min(0, 'Price must be positive'),
+  maxCapacity: yup
+    .number()
+    .typeError('Max capacity must be a number')
+    .required('Max capacity is required')
+    .min(1, 'Must allow at least 1 person'),
+  difficultyLevel: yup
+    .string()
+    .oneOf(['easy', 'moderate', 'challenging'])
+    .required('Difficulty level is required'),
+  highlights: yup
+    .array()
+    .of(yup.string().trim().required('Highlight cannot be empty'))
+    .min(1, 'At least one highlight is required'),
+  includes: yup
+    .array()
+    .of(yup.string().trim())
+    .optional(),
+  excludes: yup
+    .array()
+    .of(yup.string().trim())
+    .optional(),
 });
 
-type TripFormData = yup.InferType<typeof tripSchema>;
+
+export type TripFormData = yup.InferType<typeof tripSchema>;
 
 export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps) {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const { user, profile } = useAuth();
 
-  const { register, handleSubmit, control, formState: { errors }, watch } = useForm<TripFormData>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<TripFormData>({
     resolver: yupResolver(tripSchema),
     defaultValues: {
       highlights: [''],
@@ -43,17 +77,17 @@ export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps
     },
   });
 
-  const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray({
+  const { fields: highlightFields, append: appendHighlight, remove: removeHighlight } = useFieldArray<TripFormData, 'highlights'>({
     control,
     name: 'highlights',
   });
 
-  const { fields: includeFields, append: appendInclude, remove: removeInclude } = useFieldArray({
+  const { fields: includeFields, append: appendInclude, remove: removeInclude } = useFieldArray<TripFormData, 'includes'>({
     control,
     name: 'includes',
   });
 
-  const { fields: excludeFields, append: appendExclude, remove: removeExclude } = useFieldArray({
+  const { fields: excludeFields, append: appendExclude, remove: removeExclude } = useFieldArray<TripFormData, 'excludes'>({
     control,
     name: 'excludes',
   });
@@ -66,7 +100,7 @@ export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const onSubmit = async (data: TripFormData) => {
+  const onSubmit: SubmitHandler<TripFormData> = async (data) => {
     if (!user || !profile?.is_admin) {
       toast.error('Only admins can create trips');
       return;
@@ -86,9 +120,9 @@ export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps
             price: data.price,
             max_capacity: data.maxCapacity,
             difficulty_level: data.difficultyLevel,
-            highlights: data.highlights.filter(h => h.trim()),
-            includes: data.includes.filter(i => i.trim()),
-            excludes: data.excludes.filter(e => e.trim()),
+            highlights: (data.highlights ?? []).filter((h): h is string => typeof h === 'string' && h.trim().length > 0),
+            includes: (data.includes ?? []).filter((i): i is string => typeof i === 'string' && i.trim().length > 0),
+            excludes: (data.excludes ?? []).filter((e): e is string => typeof e === 'string' && e.trim().length > 0),
             images: images,
             is_active: true,
           },
@@ -139,9 +173,8 @@ export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-8">
-          {/* Basic Information */}
+        <form onSubmit={handleSubmit<TripFormData>(onSubmit)} className="p-8 space-y-8">
+        
           <div className="grid md:grid-cols-2 gap-8">
             <div className="form-group">
               <label className="form-label">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import{ useState } from 'react';
 import { X, Building, Mail, Phone, Globe, DollarSign } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -35,10 +35,7 @@ export function SponsorshipInquiryModal({ onClose, onSuccess }: SponsorshipInqui
   const onSubmit = async (data: InquiryFormData) => {
     setLoading(true);
     try {
-      // In production, this would send an email or create a database record
       console.log('Partnership inquiry:', data);
-      
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success('Partnership inquiry sent successfully!');

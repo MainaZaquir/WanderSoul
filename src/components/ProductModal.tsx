@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, Download, MapPin, Clock, Star, ShoppingCart } from 'lucide-react';
 import { Product } from '../lib/supabase';
 

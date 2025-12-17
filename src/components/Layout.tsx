@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useCallback, useMemo } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Hop as Home, MapPin, ShoppingBag, Users, Award, Mail, User, LogOut, Menu, X, Bell, Search, Settings, ShoppingCart } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Hop as Home, MapPin, ShoppingBag, Users, Award, Mail, LogOut, Menu, X, Bell, Search, Settings, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../context/CartContext';
 import { UserProfileModal } from './UserProfileModal';
@@ -13,9 +13,8 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { user, profile, signOut, loading: authLoading } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { getTotalItems } = useCart();
-  const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -60,7 +59,7 @@ export function Layout({ children }: LayoutProps) {
                 <span className="text-white font-bold text-lg">M</span>
               </div>
               <div className="hidden sm:block">
-                <span className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">Travel With Muchina</span>
+                <span className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">Muchina Malomba</span>
                 <div className="text-xs text-gray-500 font-medium">Adventure Curator</div>
               </div>
             </Link>

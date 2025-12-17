@@ -17,27 +17,25 @@ INSERT INTO products
 (name, description, price, category, type, images, digital_file_url, destination, duration, highlights, is_active, stock_quantity, created_at, updated_at)
 VALUES 
 (
-  'Ultimate Maasai Mara Safari Experience',
-  'Embark on an unforgettable 7-day safari adventure in Kenya''s most famous game reserve. This comprehensive itinerary includes luxury accommodations, expert guides, and exclusive access to the best wildlife viewing spots during the Great Migration season.',
+  'Zanzibar 2-7 Day Trip',
+  'Explore the spice islands, beaches, and Stone Town in Zanzibar.',
   3000,
   'digital',
   'digital',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/maasai-mara-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/maasai-mara-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/maasai-mara-3.jpg'
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image10.jpeg',
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image33.jpeg'
   ],
-  'itineraries/Maasai-Mara.pdf',
-  'Maasai Mara National Reserve',
-  '7 Days / 6 Nights',
+  'itineraries/ZANZIBAR.pdf',
+  'Zanzibar',
+  '2-7 Days / 1-6 Nights',
   ARRAY[
-    'Big Five wildlife encounters',
-    'Great Migration viewing (seasonal)',
-    'Luxury tented camps',
-    'Professional safari guide',
-    'Cultural Maasai village visit',
-    'Hot air balloon safari option',
-    'All meals and transfers included'
+   'Spice market tour',
+   'Salaam Cave',
+   'Coral reef snorkeling',
+   'Stone Town Guided Tour',
+   'Sunset Dhow Cruise',
+   'Nakupenda Island'
   ],
   true,
   0,
@@ -45,27 +43,24 @@ VALUES
   NOW()
 ),
 (
-  'Mount Kenya Climbing Expedition',
-  'Conquer Africa''s second-highest peak with this expertly crafted 6-day climbing itinerary. Includes detailed route planning, equipment lists, accommodation bookings, and safety protocols for both Sirimon and Chogoria routes.',
+  'Cape Town 2-7 Day Trip',
+  'Experience safaris, vineyards, and scenic landscapes in South Africa.',
   3000,
   'digital',
   'digital',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/mount-kenya-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/mount-kenya-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/mount-kenya-3.jpg'
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image21.jpeg',
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image5.jpeg'
   ],
-  'itineraries/Mount-Kenya.pdf',
-  'Mount Kenya National Park',
-  '6 Days / 5 Nights',
+  'itineraries/CAPETOWN.pdf',
+  'CapeTown, South Africa',
+  '2-7 Days / 1-6 Nights',
   ARRAY[
-    'Point Lenana summit attempt',
-    'Professional mountain guide',
-    'Mountain hut accommodations',
-    'Detailed packing checklist',
-    'Route maps and GPS coordinates',
-    'Emergency evacuation plan',
-    'Post-climb celebration dinner'
+   'Penguins at Boulders Beach',
+   'Wine tasting',
+   'Table Mountain hike',
+   'Explore the Bo-Kaap Neighborhood',
+   'Robben Island Tour'
   ],
   true,
   0,
@@ -73,27 +68,22 @@ VALUES
   NOW()
 ),
 (
-  'Diani Beach Coastal Paradise',
-  'Discover Kenya''s pristine coastline with this 5-day beach and cultural immersion experience. Perfect blend of relaxation, water sports, and Swahili culture exploration along the Indian Ocean.',
+  'Lamu 2-7 Day Trip',
+  'Discover the charm, culture, and serene beauty of Lamu.',
   3000,
   'digital',
   'digital',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/diani-beach-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/diani-beach-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/diani-beach-3.jpg'
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image15.jpeg'
   ],
-  'itineraries/Diani-Beach.pdf',
-  'Diani Beach, Kwale County',
-  '5 Days / 4 Nights',
+  'itineraries/LAMU.pdf',
+  'Lamu Island, Kwale County',
+  '2-7 Days / 1-6 Nights',
   ARRAY[
-    'Luxury beachfront resort',
-    'Dhow sailing excursion',
-    'Snorkeling and diving spots',
-    'Swahili cooking class',
-    'Colobus monkey sanctuary visit',
-    'Kite surfing lessons',
-    'Sunset camel rides'
+   'Lamu Museum',
+   'Lamu Town Guided Tour',
+   'Sunset Dhow Cruise',
+   'Takwa Ruins'
   ],
   true,
   0,
@@ -101,27 +91,23 @@ VALUES
   NOW()
 ),
 (
-  'Amboseli Elephant Kingdom Safari',
-  'Experience the majestic elephants of Amboseli with Mount Kilimanjaro as your backdrop. This 4-day safari focuses on elephant behavior, photography, and conservation education in one of Kenya''s most scenic parks.',
+  'Arusha 2 Day Trip',
+  'Explore the stunning landscapes and cultural experiences of Arusha.',
   3000,
   'digital',
   'digital',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/amboseli-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/amboseli-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/amboseli-3.jpg'
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image26.jpeg',
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image27.jpeg'
   ],
-  'itineraries/Amboseli.pdf',
+  'itineraries/ARUSHA.pdf',
   'Amboseli National Park',
-  '4 Days / 3 Nights',
+  '2 Days / 1 Nights',
   ARRAY[
-    'Large elephant herds',
-    'Mount Kilimanjaro views',
-    'Photography workshops',
-    'Maasai cultural center',
-    'Bird watching (400+ species)',
-    'Conservation project visit',
-    'Luxury eco-lodge stay'
+   'African art gallery',
+   'Ngaresero mountain lodge',
+   'Meru eco camp',
+   'Meserani snake park'
   ],
   true,
   0,
@@ -129,27 +115,25 @@ VALUES
   NOW()
 ),
 (
-  'Lake Nakuru Flamingo Spectacle',
-  'Witness millions of flamingos paint Lake Nakuru pink in this 3-day birding and wildlife adventure. Includes rhino tracking, waterfall hikes, and visits to nearby cultural sites in the Great Rift Valley.',
+  'Dar-es-Salaam 5-7 Day Trip',
+  'Enjoy Dar-es-Salaam’s beaches, culture, museums, and coastal adventures.',
+
   3000,
   'digital',
   'digital',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/lake-nakuru-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/lake-nakuru-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/lake-nakuru-3.jpg'
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image26.jpeg',
+   'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image27.jpeg'
   ],
-  'itineraries/Lake-Nakuru.pdf',
-  'Lake Nakuru National Park',
-  '3 Days / 2 Nights',
+  'itineraries/DARESSALAAM.pdf',
+  'Dar-es-Salaam, Tanzania',
+  '5-7 Days / 4-6 Nights',
   ARRAY[
-    'Flamingo viewing spectacle',
-    'Black and white rhino tracking',
-    'Menengai Crater exploration',
-    'Makalia Falls hike',
-    'Bird watching (450+ species)',
-    'Rift Valley viewpoints',
-    'Local community visit'
+   'National Museum of Tanzania',
+   'National Village Museum',
+   'Horse riding and training',
+   'Fun City Kigamboni',
+   'Bagamoyo'
   ],
   true,
   0,
@@ -162,16 +146,15 @@ INSERT INTO products
 (name, description, price, category, type, images, destination, duration, highlights, is_active, stock_quantity, created_at, updated_at)
 VALUES 
 (
-  'Muchina Explorer Pro Backpack',
-  'The ultimate travel companion designed by Muchina for the modern African explorer. This premium 45L backpack features weather-resistant materials, ergonomic design, and multiple compartments perfect for safari adventures, mountain climbing, and urban exploration.',
+  'Wander Backpack',
+  'The ultimate travel companion designed by Muchina for the modern African explorer. This premium 45L backpack features         weather-resistant materials, ergonomic design, and multiple compartments perfect for safari adventures, mountain climbing, and urban exploration.',
   150,
   'physical',
   'rucksack',
   ARRAY[
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/backpack-1.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/backpack-2.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/backpack-3.jpg',
-    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/backpack-4.jpg'
+    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/Wander.jpeg',
+    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image2.jpeg',
+    'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image16.jpeg'
   ],
   NULL,
   NULL,

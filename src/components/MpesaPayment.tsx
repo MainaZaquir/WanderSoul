@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Smartphone, CircleCheck as CheckCircle, CircleAlert as AlertCircle } from 'lucide-react';
+import { Smartphone, CircleAlert as AlertCircle } from 'lucide-react';
 import { processMpesaPayment } from '../lib/stripe';
 import toast from 'react-hot-toast';
 
@@ -44,9 +44,7 @@ export function MpesaPayment({ amount, bookingId, orderId, onSuccess, onError }:
         setStep('instructions');
         toast.success('Payment request sent to your phone!');
         
-        // Poll for payment status (in a real app, you'd use webhooks)
         setTimeout(() => {
-          // Simulate successful payment for demo
           onSuccess('MOCK_RECEIPT_123');
         }, 10000);
       } else {

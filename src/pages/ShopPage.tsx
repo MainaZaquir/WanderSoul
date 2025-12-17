@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+
 import { ProductCatalog } from '../components/products/ProductCatalog';
 import { SEOHead } from '../components/SEOHead';
 
@@ -16,10 +16,10 @@ export function ShopPage() {
       <section className="relative py-20 bg-gradient-to-r from-orange-500 to-teal-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Adventure Gear & Guides
+            WanderSoul Backpacks & Guides
           </h1>
           <p className="text-xl text-orange-100 max-w-2xl mx-auto">
-            Premium travel gear and digital itineraries curated for the modern African explorer.
+            Premium backpacks and digital itineraries curated for the modern African explorer.
           </p>
         </div>
       </section>

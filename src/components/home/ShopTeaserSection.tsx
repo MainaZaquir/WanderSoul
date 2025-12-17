@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Backpack, ArrowRight } from 'lucide-react';
 
@@ -14,7 +14,7 @@ export function ShopTeaserSection() {
                 <span className="badge-primary">Gear Collection</span>
               </div>
               <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Muchina Rucksacks
+                Wandersoul Backpack
               </h3>
               <p className="text-2xl text-gray-700 mb-6 font-light">
                 Built for the Journey

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -50,6 +50,7 @@ export function AuthPage() {
         toast.success('Welcome back!');
         navigate('/');
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('An error occurred. Please try again.');
     } finally {
@@ -67,6 +68,7 @@ export function AuthPage() {
         toast.success('Account created successfully! Welcome to the community!');
         navigate('/');
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('An error occurred. Please try again.');
     } finally {
@@ -95,7 +97,6 @@ export function AuthPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          {/* Toggle Buttons */}
           <div className="flex bg-gray-100 rounded-lg p-1 mb-8">
             <button
               onClick={() => setIsSignUp(false)}
