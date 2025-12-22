@@ -100,8 +100,6 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
       setStep('confirmation');
       
       toast.success('Booking created successfully!');
-      
-      // Send notification email (would be handled by edge function in production)
       console.log('Booking created:', booking);
       
     } catch (error) {

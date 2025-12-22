@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { Link } from 'react-router-dom';
 import { Users, Camera, ChevronDown } from 'lucide-react';
 
@@ -27,7 +27,7 @@ export function HeroSection() {
         </div>
         
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-tight">
-          Travel With <span className="text-gradient bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">Muchina</span>
+          Muchina <span className="text-gradient bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">Malomba</span>
         </h1>
         
         <p className="text-xl md:text-3xl mb-4 text-gray-200 font-light animate-slide-up stagger-1">

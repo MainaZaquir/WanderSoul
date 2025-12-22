@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin } from 'lucide-react';
 
@@ -8,7 +7,7 @@ interface Trip {
   destination: string;
   startDate: string;
   endDate: string;
-  price: number;
+  price: number | string;
   duration: string;
   status: string;
   image: string;
@@ -71,11 +70,13 @@ export function TripCard({ trip, index }: TripCardProps) {
           <MapPin size={16} className="mr-2" />
           <span>{trip.destination}</span>
         </div>
-        <Link 
+        <Link
           to="/trips"
           className="btn-secondary w-full justify-center"
         >
-          Book Now - ${trip.price.toLocaleString()}
+          {typeof trip.price === 'number'
+            ? `Book Now - $${trip.price.toLocaleString()}`
+            : `Book Now - ${trip.price}`}
         </Link>
       </div>
     </div>

@@ -14,7 +14,7 @@ export function ShopTeaserSection() {
                 <span className="badge-primary">Gear Collection</span>
               </div>
               <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Wandersoul Backpack
+                Wander Backpacks Kenya
               </h3>
               <p className="text-2xl text-gray-700 mb-6 font-light">
                 Built for the Journey
@@ -32,8 +32,8 @@ export function ShopTeaserSection() {
             </div>
             <div className="relative h-80 md:h-full overflow-hidden">
               <img 
-                src="https://images.pexels.com/photos/346768/pexels-photo-346768.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="Travel Backpack"
+                src="https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/Wander-pack.jpeg"
+                alt="Wander Backpacks Kenya"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/10"></div>

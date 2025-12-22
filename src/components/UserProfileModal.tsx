@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, User, Mail, Phone, Shield, Camera, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import type { SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '../hooks/useAuth';
@@ -27,7 +28,7 @@ export function UserProfileModal({ onClose, onSuccess }: UserProfileModalProps) 
   const { user, profile, updateProfile } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormData>({
-    resolver: yupResolver(profileSchema),
+    resolver: (yupResolver(profileSchema) as unknown) as Resolver<ProfileFormData>,
     defaultValues: {
       fullName: profile?.full_name || '',
       email: profile?.email || user?.email || '',
@@ -41,13 +42,12 @@ export function UserProfileModal({ onClose, onSuccess }: UserProfileModalProps) 
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // For demo purposes, using a placeholder avatar
     const avatarUrl = `https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop`;
     setAvatarUrl(avatarUrl);
     toast.success('Avatar updated!');
   };
 
-  const onSubmit = async (data: ProfileFormData) => {
+  const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
     if (!user) return;
 
     setLoading(true);

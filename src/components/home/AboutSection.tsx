@@ -1,5 +1,4 @@
-import React from 'react';
-import { Instagram, Twitter, Facebook, Heart } from 'lucide-react';
+import { Instagram, Facebook, Heart } from 'lucide-react';
 
 export function AboutSection() {
   return (
@@ -9,7 +8,7 @@ export function AboutSection() {
           <div className="relative animate-slide-up">
             <div className="absolute inset-0 gradient-sunset rounded-3xl transform rotate-3 shadow-2xl"></div>
             <img 
-              src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=500"
+              src="https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image4.jpeg"
               alt="Muchina Malomba"
               className="relative rounded-3xl shadow-2xl w-full h-[450px] object-cover transition-transform duration-300 hover:rotate-1"
             />
@@ -30,15 +29,18 @@ export function AboutSection() {
               Radio Host • Adventure Curator • Travel Enthusiast
             </p>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              From the airwaves of KissFM to the African wilderness, I'm Muchina Malomba a full-time adventure junkie and part-time comedian.Catch me 😄 on Kiss FM every morning from 7 AM to 10 AM, bringing you good vibes and even better tunes! When I'm not on air, I'm off solo backpacking chasing sunsets, getting lost (on purpose), and sharing my travel tales online to spark your wanderlust.Life's too short to stay still! With years of experience curating unforgettable adventures, I believe travel is more than just visiting places its about creating connections,embracing cultures, and making memories that last a lifetime. Join me cousins as we explore the heart of Africa together.
+              Muchina is a full-time adventure junkie, storyteller, and your energetic morning companion on Kiss FM. 
+              Tune in every weekday from 6 AM to 10 AM for lively conversations, great music, and a fresh start to your day. 
+              When I’m off the air, you’ll usually find me backpacking solo, uncovering hidden gems, chasing breathtaking sunsets, 
+              and intentionally getting lost just to see where the world takes me. I share my travel adventures and behind-the-scenes
+               moments from the radio studio online, giving you a glimpse into my life both on and off the mic. Whether I’m navigating 
+               crowded city streets, sampling local street food, or making new friends along the way, my goal is simple: to inspire
+                curiosity, adventure, and a love for life’s unexpected moments.
             </p>
             
             <div className="flex space-x-4 mb-10">
               <a href="#" className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-pink-500/25">
                 <Instagram size={20} />
-              </a>
-              <a href="#" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-blue-500/25">
-                <Twitter size={20} />
               </a>
               <a href="#" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-blue-600/25">
                 <Facebook size={20} />

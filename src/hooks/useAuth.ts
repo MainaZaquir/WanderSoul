@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase, User } from '../lib/supabase';
@@ -10,17 +11,22 @@ export function useAuth() {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.debug('[useAuth] initial session', session);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
       } else {
         setLoading(false);
       }
+    }).catch(err => {
+      console.error('[useAuth] getSession error', err);
+      setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.debug('[useAuth] onAuthStateChange', event, session);
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchProfile(session.user.id);
@@ -42,28 +48,16 @@ export function useAuth() {
         .eq('id', userId)
         .single();
 
-      if (error && error.code === 'PGRST116') {
-        // User profile doesn't exist, create one
-        const { data: newProfile, error: createError } = await supabase
-          .from('users')
-          .insert([
-            {
-              id: userId,
-              email: user?.email || '',
-              is_admin: false,
-            },
-          ])
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('Error creating profile:', createError);
-        } else {
-          setProfile(newProfile);
-        }
-      } else if (error) {
+      if (error) {
+        // If we get an error fetching the profile, do not attempt to create it from the browser.
+        // Inserts into `users` may be blocked by Row Level Security (RLS) or require a service role key.
+        // Recommended approach: create the profile server-side (Postgres trigger on auth.users or an Edge Function)
+        // For now, log and surface no profile; don't throw or attempt a client-side insert which results in 401.
         console.error('Error fetching profile:', error);
       } else {
+        console.error('Error fetching profile:', error);
+      }
+      if (!error && data) {
         setProfile(data);
       }
     } catch (error) {
@@ -86,18 +80,9 @@ export function useAuth() {
       email,
       password,
     });
-
-    if (data.user && !error) {
-      // Create user profile
-      await supabase.from('users').insert([
-        {
-          id: data.user.id,
-          email,
-          full_name: fullName,
-          is_admin: false,
-        },
-      ]);
-    }
+  // NOTE: creating a row in `users` from the browser will often fail with 401 if RLS is enabled.
+  // Create profiles server-side using a Postgres trigger on auth.users or an Edge Function.
+  // See repository README or Supabase docs for recommended approach.
 
     return { data, error };
   };

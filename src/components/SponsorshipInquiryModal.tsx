@@ -1,6 +1,7 @@
 import{ useState } from 'react';
 import { X, Building, Mail, Phone, Globe, DollarSign } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import type { SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import toast from 'react-hot-toast';
@@ -27,12 +28,12 @@ export function SponsorshipInquiryModal({ onClose, onSuccess }: SponsorshipInqui
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, watch } = useForm<InquiryFormData>({
-    resolver: yupResolver(inquirySchema),
+    resolver: (yupResolver(inquirySchema) as unknown) as Resolver<InquiryFormData>,
   });
 
   const message = watch('message', '');
 
-  const onSubmit = async (data: InquiryFormData) => {
+  const onSubmit: SubmitHandler<InquiryFormData> = async (data) => {
     setLoading(true);
     try {
       console.log('Partnership inquiry:', data);

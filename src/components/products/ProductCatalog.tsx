@@ -17,7 +17,7 @@ export function ProductCatalog() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const { products, loading, error } = useProducts(filters);
+  const { products, loading, error, refetch } = useProducts(filters);
   const { addToCart } = useCart();
 
   const handleAddToCart = (product: any) => {
@@ -52,8 +52,8 @@ export function ProductCatalog() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading products: {error}</p>
-          <button 
-            onClick={() => window.location.reload()}
+          <button
+            onClick={() => refetch()}
             className="btn-primary"
           >
             Try Again

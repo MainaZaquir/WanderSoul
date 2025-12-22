@@ -186,10 +186,10 @@ export function TripsPage() {
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-2xl font-bold text-teal-600">
-                            ${trip.price.toLocaleString()}
-                          </span>
-                          <span className="text-gray-600 text-sm ml-1">per person</span>
+                            <span className="text-2xl font-bold text-teal-600">
+                              {trip.price === null ? "Price to be announced" : `$${trip.price.toLocaleString()}`}
+                            </span>
+                              {trip.price !== null && <span className="text-gray-600 text-sm ml-1">per person</span>}
                         </div>
                         <button
                           onClick={() => handleBookTrip(trip)}
@@ -224,7 +224,7 @@ export function TripsPage() {
           onSuccess={() => {
             setShowBookingModal(false);
             setSelectedTrip(null);
-            fetchTrips(); // Refresh trips to update availability
+            fetchTrips(); 
           }}
         />
       )}

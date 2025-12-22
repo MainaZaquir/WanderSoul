@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient } from '@supabase/supabase-js';
+// Re-export the single Supabase client from supabaseClient to avoid duplicate instances
+import { supabase } from './supabaseClient';
+export { supabase };
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Note: DB types remain in this file so other modules can import types from here.
 
 // Database types
 export interface User {

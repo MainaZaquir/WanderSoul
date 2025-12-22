@@ -6,36 +6,36 @@ import { TripCard } from '../ui/TripCard';
 const upcomingTrips = [
   {
     id: '1',
-    title: 'Maasai Mara Safari Experience',
-    destination: 'Maasai Mara, Kenya',
+    title: 'Arusha, Tanzania Adventure',
+    destination: 'Arusha, Tanzania',
     startDate: '2025-03-15',
     endDate: '2025-03-20',
-    price: 1250,
+    price: 'Price to be Announced',
     duration: '6 Days',
     status: 'Available',
-    image: 'https://images.pexels.com/photos/631477/pexels-photo-631477.jpeg?auto=compress&cs=tinysrgb&w=600'
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image1.jpeg'
   },
   {
     id: '2',
-    title: 'Diani Beach Coastal Retreat',
-    destination: 'Diani Beach, Kenya',
+    title: 'Zanzibar Beach Getaway',
+    destination: 'Zanzibar, Tanzania',
     startDate: '2025-04-08',
     endDate: '2025-04-11',
-    price: 850,
+    price: 'Price to be Announced',
     duration: '4 Days',
-    status: 'Few Spots Left',
-    image: 'https://images.pexels.com/photos/1288484/pexels-photo-1288484.jpeg?auto=compress&cs=tinysrgb&w=600'
+    status: 'Available',
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image33.jpeg'
   },
   {
     id: '3',
-    title: 'Mount Kenya Climbing Expedition',
-    destination: 'Mount Kenya, Kenya',
+    title: 'Dar-es-salaam City Exploration',
+    destination: 'Dar-es-salaam, Tanzania',
     startDate: '2025-05-20',
     endDate: '2025-05-26',
-    price: 1450,
+    price: 'Price to be Announced',
     duration: '7 Days',
     status: 'Available',
-    image: 'https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=600'
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image11.jpeg'
   }
 ];
 

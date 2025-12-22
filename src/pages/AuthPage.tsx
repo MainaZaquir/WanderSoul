@@ -43,7 +43,10 @@ export function AuthPage() {
   const handleSignIn = async (data: SignInFormData) => {
     setLoading(true);
     try {
-      const { error } = await signIn(data.email, data.password);
+      console.debug('[AuthPage] signIn attempt', data.email);
+      const result = await signIn(data.email, data.password);
+      console.debug('[AuthPage] signIn result', result);
+      const { error } = result;
       if (error) {
         toast.error(error.message);
       } else {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Award, ExternalLink, Mail, Calendar, Building, Users, Target, TrendingUp } from 'lucide-react';
 import { supabase, Sponsorship } from '../lib/supabase';
 import { SponsorshipInquiryModal } from '../components/SponsorshipInquiryModal';
