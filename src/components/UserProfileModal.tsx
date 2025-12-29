@@ -222,10 +222,10 @@ export function UserProfileModal({ onClose, onSuccess }: UserProfileModalProps) 
                     Budget Range
                   </label>
                   <select className="input-base">
-                    <option>Under $500</option>
-                    <option>$500 - $1,000</option>
-                    <option>$1,000 - $2,000</option>
-                    <option>$2,000+</option>
+                    <option>Under KSh 25,000</option>
+                    <option>KSh 25,000 - KSh 50,000</option>
+                    <option>KSh 50,000 - KSh 100,000</option>
+                    <option>KSh 100,000+</option>
                   </select>
                 </div>
                 <div>

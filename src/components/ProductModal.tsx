@@ -1,5 +1,6 @@
 import { X, Download, MapPin, Clock, Star, ShoppingCart } from 'lucide-react';
 import { Product } from '../lib/supabase';
+import { formatPrice } from '../lib/currency';
 
 interface ProductModalProps {
   product: Product;
@@ -66,7 +67,7 @@ export function ProductModal({ product, onClose, onAddToCart }: ProductModalProp
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-3xl font-bold text-teal-600">
-                  ${product.price}
+                  {formatPrice(product.price)}
                 </span>
                 {product.category === 'physical' && (
                   <span className="text-sm text-gray-600">

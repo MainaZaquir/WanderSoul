@@ -8,10 +8,10 @@ const upcomingTrips = [
     id: '1',
     title: 'Arusha, Tanzania Adventure',
     destination: 'Arusha, Tanzania',
-    startDate: '2025-03-15',
-    endDate: '2025-03-20',
+    startDate: '2026-03-10',
+    endDate: '2026-03-16',
     price: 'Price to be Announced',
-    duration: '6 Days',
+    duration: '10',
     status: 'Available',
     image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image1.jpeg'
   },
@@ -19,23 +19,23 @@ const upcomingTrips = [
     id: '2',
     title: 'Zanzibar Beach Getaway',
     destination: 'Zanzibar, Tanzania',
-    startDate: '2025-04-08',
-    endDate: '2025-04-11',
+    startDate: '2026-06-01',
+    endDate: '2026-06-07',
     price: 'Price to be Announced',
-    duration: '4 Days',
+    duration: '10',
     status: 'Available',
     image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image33.jpeg'
   },
   {
     id: '3',
-    title: 'Dar-es-salaam City Exploration',
-    destination: 'Dar-es-salaam, Tanzania',
-    startDate: '2025-05-20',
-    endDate: '2025-05-26',
+    title: 'Cape Town 2-7 Day Trip',
+    destination: 'Cape Town, South Africa',
+    startDate: '2026-07-01',
+    endDate: '2026-07-07',
     price: 'Price to be Announced',
-    duration: '7 Days',
+    duration: '10',
     status: 'Available',
-    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image11.jpeg'
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image21.jpeg'
   }
 ];
 

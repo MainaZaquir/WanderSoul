@@ -4,6 +4,7 @@ import { Calendar, MapPin, Star, Users, ArrowRight, ListFilter as Filter } from 
 import { supabase, Trip } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { BookingModal } from '../components/BookingModal';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 export function TripsPage() {
@@ -187,7 +188,7 @@ export function TripsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                             <span className="text-2xl font-bold text-teal-600">
-                              {trip.price === null ? "Price to be announced" : `$${trip.price.toLocaleString()}`}
+                              {formatPrice(trip.price)}
                             </span>
                               {trip.price !== null && <span className="text-gray-600 text-sm ml-1">per person</span>}
                         </div>

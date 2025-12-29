@@ -18,7 +18,7 @@ export const createPaymentIntent = async (amount: number, bookingId?: string, or
       },
       body: JSON.stringify({
         amount,
-        currency: 'usd',
+        currency: 'kes',
         bookingId,
         orderId,
         metadata: {

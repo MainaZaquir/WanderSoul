@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -31,6 +32,7 @@ export function CreatePostModal({ onClose, onSuccess }: CreatePostModalProps) {
 
   const content = watch('content', '');
 
+  // Add uploaded images
   const handleImageUpload = (urls: string[]) => {
     setImages(prev => [...prev, ...urls].slice(0, 6));
   };
@@ -39,30 +41,52 @@ export function CreatePostModal({ onClose, onSuccess }: CreatePostModalProps) {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const isValidUrl = (url: string) => {
+    try {
+      return Boolean(new URL(url));
+    } catch {
+      return false;
+    }
+  };
+
   const onSubmit = async (data: PostFormData) => {
     if (!user) return;
 
     setLoading(true);
+
     try {
+      const postPayload: Record<string, unknown> = {
+        user_id: user.id,
+        title: data.title,
+        content: data.content,
+      };
+
+      const validImages = images.filter(url => typeof url === 'string' && url.trim() !== '' && isValidUrl(url));
+      if (validImages.length > 0) postPayload.images = validImages;
+
       const { error } = await supabase
         .from('community_posts')
-        .insert([
-          {
-            user_id: user.id,
-            title: data.title,
-            content: data.content,
-            images: images,
-          },
-        ]);
+        .insert([postPayload]);
 
       if (error) throw error;
 
       toast.success('Post created successfully!');
       onSuccess();
-    } catch (error) {
+      onClose();
+    } catch (error: unknown) {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post. Please try again.');
-    } finally {
+      let errorMessage = 'Failed to create post. Please try again.';
+      if (error && typeof error === 'object') {
+        // Handle errors with 'message' property
+        if ('message' in error && typeof (error as any).message === 'string') {
+          errorMessage = (error as any).message;
+        }
+        // Handle PostgREST/Supabase error in array
+        else if ('[0]' in error && Array.isArray(error) && error[0]?.message) {
+          errorMessage = error[0].message;
+        }
+      }
+      toast.error(errorMessage);
       setLoading(false);
     }
   };
@@ -132,6 +156,7 @@ export function CreatePostModal({ onClose, onSuccess }: CreatePostModalProps) {
             />
           </div>
 
+          {/* Guidelines */}
           <div className="bg-blue-50 p-4 rounded-lg">
             <h4 className="font-medium text-blue-900 mb-2">Community Guidelines</h4>
             <ul className="text-sm text-blue-800 space-y-1">
@@ -142,6 +167,7 @@ export function CreatePostModal({ onClose, onSuccess }: CreatePostModalProps) {
             </ul>
           </div>
 
+          {/* Buttons */}
           <div className="flex justify-end space-x-4">
             <button
               type="button"

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Smartphone, CircleAlert as AlertCircle } from 'lucide-react';
 import { processMpesaPayment } from '../lib/stripe';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 interface MpesaPaymentProps {
@@ -145,8 +146,7 @@ export function MpesaPayment({ amount, bookingId, orderId, onSuccess, onError }:
             <AlertCircle className="text-green-600 mt-0.5" size={20} />
             <div className="text-sm text-green-800">
               <p className="font-medium mb-1">Amount to Pay:</p>
-              <p className="text-lg font-bold">KES {(amount * 130).toLocaleString()}</p>
-              <p className="text-xs mt-1">Approximately $1 = KES 130</p>
+              <p className="text-lg font-bold">{formatPrice(amount)}</p>
             </div>
           </div>
         </div>

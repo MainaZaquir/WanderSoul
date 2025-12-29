@@ -173,7 +173,7 @@ export function TripPlanningModal({ onClose, onSuccess }: TripPlanningModalProps
           </button>
         </div>
 
-        <form onSubmit={handleSubmit<TripFormData>(onSubmit)} className="p-8 space-y-8">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="p-8 space-y-8">
         
           <div className="grid md:grid-cols-2 gap-8">
             <div className="form-group">

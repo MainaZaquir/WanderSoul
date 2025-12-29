@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ShoppingCart, Download, MapPin, Clock, Eye } from 'lucide-react';
 import { Product } from '../../types/product';
 import { ProductImageGallery } from './ProductImageGallery';
+import { formatPrice } from '../../lib/currency';
 
 interface ProductCardProps {
   product: Product;
@@ -121,7 +122,7 @@ export function ProductCard({ product, onAddToCart, onViewDetails }: ProductCard
         <div className="flex items-center justify-between">
           <div>
             <span className="text-2xl font-bold text-teal-600">
-              ${product.price.toLocaleString()}
+              {formatPrice(product.price)}
             </span>
             {!isDigital && (
               <p className="text-xs text-gray-500 mt-1">

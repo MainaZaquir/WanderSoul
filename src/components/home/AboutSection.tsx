@@ -39,18 +39,36 @@ export function AboutSection() {
             </p>
             
             <div className="flex space-x-4 mb-10">
-              <a href="#" className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-pink-500/25">
+              <a
+                href="https://www.instagram.com/muchinamalomba?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-pink-500/25"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-blue-600/25">
-                <Facebook size={20} />
+              <a
+                href="https://www.facebook.com/p/muchina-malomba-100066466611519/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-blue-600/25"
+              >
+              <Facebook size={20} />
               </a>
+
             </div>
             
-            <button className="btn-primary text-lg px-10 py-4 hover-glow">
+            <a 
+              href="https://www.instagram.com/muchinamalomba?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
+              target="_blank" 
+               rel="noopener noreferrer"
+            >
+              <button className="btn-primary text-lg px-10 py-4 hover-glow">
               <Heart className="mr-2" size={20} />
               Connect With Me
             </button>
+            </a>
+            
           </div>
         </div>
       </div>

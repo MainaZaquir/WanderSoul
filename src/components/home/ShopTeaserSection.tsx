@@ -11,16 +11,19 @@ export function ShopTeaserSection() {
             <div className="p-8 md:p-16">
               <div className="flex items-center mb-6">
                 <Backpack className="text-orange-500 mr-3" size={32} />
-                <span className="badge-primary">Gear Collection</span>
+                <span className="badge-primary">Gear Collection & Digital Guides</span>
               </div>
               <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Wander Backpacks Kenya
               </h3>
               <p className="text-2xl text-gray-700 mb-6 font-light">
-                Built for the Journey
+                Built for the Journey - Planned or Spontaneous
               </p>
               <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-                Premium quality travel gear designed for the modern African explorer. Durable, functional, and stylish backpacks that have been tested on countless adventures across Kenya and beyond.
+              Premium quality travel gear designed for the modern African explorer. 
+              From durable, functional backpacks tested across Kenya and beyond, 
+              to thoughtfully crafted itineraries that help you plan smarter, travel deeper, 
+              and experience more we’ve got your journey covered from packing to planning.
               </p>
               <Link 
                 to="/shop"

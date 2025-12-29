@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Users, MapPin, ShoppingBag, MessageSquare, Award, Star, TrendingUp, Calendar, DollarSign } from 'lucide-react';
 import { supabase, Trip, Product, User, Booking, Order, Review, CommunityPost, Sponsorship } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 export function AdminDashboard() {
@@ -27,13 +28,7 @@ export function AdminDashboard() {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [, setSponsorships] = useState<Sponsorship[]>([]);
 
-  useEffect(() => {
-    if (profile?.is_admin) {
-      fetchDashboardData();
-    }
-  }, [profile]);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch all data in parallel
@@ -87,7 +82,13 @@ export function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (profile?.is_admin) {
+      fetchDashboardData();
+    }
+  }, [profile, fetchDashboardData]);
 
   const handleApproveReview = async (reviewId: string) => {
     try {
@@ -143,6 +144,37 @@ export function AdminDashboard() {
     } catch (error) {
       console.error('Error updating post:', error);
       toast.error('Failed to update post');
+    }
+  };
+
+  const handleToggleAdmin = async (userId: string, email: string, currentAdminStatus: boolean) => {
+    if (!confirm(`Are you sure you want to ${currentAdminStatus ? 'remove admin access from' : 'promote'} ${email}?`)) {
+      return;
+    }
+
+    try {
+      // Try using the database function first (if available)
+      const { error: functionError } = await supabase.rpc('promote_user_to_admin', {
+        target_email: email
+      });
+
+      // If function doesn't exist or fails, fall back to direct update
+      if (functionError) {
+        const { error } = await supabase
+          .from('users')
+          .update({ is_admin: !currentAdminStatus })
+          .eq('id', userId);
+
+        if (error) throw error;
+      }
+
+      setUsers(prev => prev.map(user => 
+        user.id === userId ? { ...user, is_admin: !currentAdminStatus } : user
+      ));
+      toast.success(`User ${!currentAdminStatus ? 'promoted to admin' : 'removed from admin'}`);
+    } catch (error) {
+      console.error('Error updating admin status:', error);
+      toast.error('Failed to update admin status');
     }
   };
 
@@ -223,7 +255,7 @@ export function AdminDashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${stats.totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">{formatPrice(stats.totalRevenue)}</p>
               </div>
             </div>
           </div>
@@ -484,6 +516,9 @@ export function AdminDashboard() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Joined
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -517,6 +552,18 @@ export function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {new Date(user.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <button
+                              onClick={() => handleToggleAdmin(user.id, user.email, user.is_admin)}
+                              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                                user.is_admin
+                                  ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                  : 'bg-green-100 text-green-700 hover:bg-green-200'
+                              }`}
+                            >
+                              {user.is_admin ? 'Remove Admin' : 'Make Admin'}
+                            </button>
                           </td>
                         </tr>
                       ))}

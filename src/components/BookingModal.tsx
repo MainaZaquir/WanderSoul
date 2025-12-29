@@ -8,6 +8,7 @@ import { supabase, Trip } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { StripePayment } from './StripePayment';
 import { MpesaPayment } from './MpesaPayment';
+import { formatPrice } from '../lib/currency';
 // import { ImageUpload, ImagePreview } from './ImageUpload';
 import toast from 'react-hot-toast';
 
@@ -176,7 +177,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
               </p>
             </div>
             <div className="ml-auto text-right">
-              <p className="text-3xl font-bold text-teal-600">${trip.price.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-teal-600">{formatPrice(trip.price)}</p>
               <p className="text-sm text-gray-500">per person</p>
             </div>
           </div>
@@ -410,7 +411,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Amount Paid:</span>
-                    <span className="font-bold text-green-600">${trip.price.toLocaleString()}</span>
+                    <span className="font-bold text-green-600">{formatPrice(trip.price)}</span>
                   </div>
                 </div>
               </div>

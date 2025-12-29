@@ -175,12 +175,12 @@ export function SponsorshipInquiryModal({ onClose, onSuccess }: SponsorshipInqui
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">Select budget range</option>
-                <option value="under-1000">Under $1,000</option>
-                <option value="1000-5000">$1,000 - $5,000</option>
-                <option value="5000-10000">$5,000 - $10,000</option>
-                <option value="10000-25000">$10,000 - $25,000</option>
-                <option value="25000-50000">$25,000 - $50,000</option>
-                <option value="over-50000">Over $50,000</option>
+                <option value="under-50000">Under KSh 50,000</option>
+                <option value="50000-250000">KSh 50,000 - KSh 250,000</option>
+                <option value="250000-500000">KSh 250,000 - KSh 500,000</option>
+                <option value="500000-1300000">KSh 500,000 - KSh 1,300,000</option>
+                <option value="1300000-2600000">KSh 1,300,000 - KSh 2,600,000</option>
+                <option value="over-2600000">Over KSh 2,600,000</option>
                 <option value="discuss">Prefer to discuss</option>
               </select>
               {errors.budget && (

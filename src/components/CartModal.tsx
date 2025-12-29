@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { StripePayment } from './StripePayment';
 import { MpesaPayment } from './MpesaPayment';
 import { supabase } from '../lib/supabase';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 interface CartModalProps {
@@ -193,11 +194,11 @@ export function CartModal({ onClose }: CartModalProps) {
                     
                     <div className="text-right">
                       <p className="text-lg font-bold text-gray-900">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.product.price * item.quantity)}
                       </p>
                       {item.quantity > 1 && (
                         <p className="text-sm text-gray-500">
-                          ${item.product.price} each
+                          {formatPrice(item.product.price)} each
                         </p>
                       )}
                     </div>
@@ -217,7 +218,7 @@ export function CartModal({ onClose }: CartModalProps) {
             <div className="bg-gradient-to-r from-orange-50 to-teal-50 p-8 rounded-2xl border border-orange-200">
               <div className="flex items-center justify-between mb-6">
                 <span className="text-2xl font-bold text-gray-900">Total:</span>
-                <span className="text-3xl font-bold text-teal-600">${totalPrice.toFixed(2)}</span>
+                <span className="text-3xl font-bold text-teal-600">{formatPrice(totalPrice)}</span>
               </div>
               
               <div className="flex space-x-4">
@@ -251,13 +252,13 @@ export function CartModal({ onClose }: CartModalProps) {
                       {item.product.name} {item.quantity > 1 && `x${item.quantity}`}
                     </span>
                     <span className="font-semibold">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      {formatPrice(item.product.price * item.quantity)}
                     </span>
                   </div>
                 ))}
                 <div className="border-t pt-3 flex justify-between text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-teal-600">${totalPrice.toFixed(2)}</span>
+                  <span className="text-teal-600">{formatPrice(totalPrice)}</span>
                 </div>
               </div>
             </div>

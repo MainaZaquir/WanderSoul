@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../context/CartContext';
 import { UserProfileModal } from './UserProfileModal';
 import { CartModal } from './CartModal';
+import { Logo } from './Logo';
 import { logUserAction } from '../lib/errorLogger';
 
 interface LayoutProps {
@@ -55,8 +56,9 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 gradient-orange rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                <span className="text-white font-bold text-lg">M</span>
+              <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+                <Logo height={50} className="hidden sm:block" />
+                <Logo height={40} className="sm:hidden" />
               </div>
               <div className="hidden sm:block">
                 <span className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">Muchina Malomba</span>
@@ -299,8 +301,8 @@ export function Layout({ children }: LayoutProps) {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-2 space-y-6">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 gradient-orange rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-xl">M</span>
+                <div className="flex-shrink-0">
+                  <Logo height={48} className="brightness-0 invert" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold">Travel With Muchina</h3>

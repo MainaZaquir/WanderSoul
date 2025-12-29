@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Trip } from '../lib/supabase';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 interface InvitationModalProps {
@@ -80,7 +81,7 @@ export function InvitationModal({ trip, onClose, onSuccess }: InvitationModalPro
 
   const handleWhatsAppShare = () => {
     const whatsappMessage = encodeURIComponent(
-      `${message}\n\nTrip Details:\n📍 ${trip.destination}\n📅 ${new Date(trip.start_date).toLocaleDateString()} - ${new Date(trip.end_date).toLocaleDateString()}\n💰 $${trip.price}\n\nBook here: ${shareUrl}`
+      `${message}\n\nTrip Details:\n📍 ${trip.destination}\n📅 ${new Date(trip.start_date).toLocaleDateString()} - ${new Date(trip.end_date).toLocaleDateString()}\n💰 ${formatPrice(trip.price)}\n\nBook here: ${shareUrl}`
     );
     window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
   };
@@ -118,7 +119,7 @@ export function InvitationModal({ trip, onClose, onSuccess }: InvitationModalPro
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-teal-600">${trip.price.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-teal-600">{formatPrice(trip.price)}</p>
               <p className="text-sm text-gray-500">per person</p>
             </div>
           </div>
@@ -217,7 +218,7 @@ export function InvitationModal({ trip, onClose, onSuccess }: InvitationModalPro
                     <strong>Trip:</strong> {trip.title}<br />
                     <strong>Destination:</strong> {trip.destination}<br />
                     <strong>Dates:</strong> {new Date(trip.start_date).toLocaleDateString()} - {new Date(trip.end_date).toLocaleDateString()}<br />
-                    <strong>Price:</strong> ${trip.price}<br />
+                    <strong>Price:</strong> {formatPrice(trip.price)}<br />
                     <strong>Book:</strong> <span className="text-blue-600">{shareUrl}</span>
                   </p>
                 </div>

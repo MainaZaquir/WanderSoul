@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { stripePromise, createPaymentIntent } from '../lib/stripe';
 import { CreditCard, Lock } from 'lucide-react';
+import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
 
 interface StripePaymentProps {
@@ -104,7 +105,7 @@ function PaymentForm({ amount, bookingId, orderId, onSuccess, onError }: StripeP
         disabled={!stripe || loading}
         className={`btn-primary w-full text-lg py-4 ${loading ? 'btn-loading' : ''}`}
       >
-        {loading ? 'Processing Payment...' : `Pay $${amount.toLocaleString()}`}
+        {loading ? 'Processing Payment...' : `Pay ${formatPrice(amount)}`}
       </button>
     </form>
   );

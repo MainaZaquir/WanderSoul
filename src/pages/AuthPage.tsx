@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
@@ -24,6 +25,11 @@ const signUpSchema = yup.object({
 type SignInFormData = yup.InferType<typeof signInSchema>;
 type SignUpFormData = yup.InferType<typeof signUpSchema>;
 
+type SupabaseResult = {
+  data?: { session?: unknown; user?: unknown } | null;
+  error?: { message?: string; status?: number; statusCode?: number } | null;
+};
+
 export function AuthPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -46,15 +52,29 @@ export function AuthPage() {
       console.debug('[AuthPage] signIn attempt', data.email);
       const result = await signIn(data.email, data.password);
       console.debug('[AuthPage] signIn result', result);
-      const { error } = result;
+      const { error, data: respData } = result as SupabaseResult;
+
       if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Welcome back!');
-        navigate('/');
+        const errObj = error as { status?: number; statusCode?: number; message?: string } | null;
+        const status = errObj?.status ?? errObj?.statusCode;
+        if (status === 401) {
+          toast.error('Unauthorized — check your credentials. If you recently signed up, confirm your email first.');
+        } else {
+          toast.error(errObj?.message || 'Sign in failed');
+        }
+        return;
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+
+      
+      if (!respData?.session && !respData?.user) {
+        toast.success('Sign-in request accepted. If your project requires email confirmation, please check your inbox and confirm before signing in.');
+        return;
+      }
+
+      toast.success('Welcome back!');
+      navigate('/');
+    } catch (err) {
+      console.error('[AuthPage] signIn error', err);
       toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -64,15 +84,32 @@ export function AuthPage() {
   const handleSignUp = async (data: SignUpFormData) => {
     setLoading(true);
     try {
-      const { error } = await signUp(data.email, data.password, data.fullName);
+      const result = await signUp(data.email, data.password);
+      const { error } = result as SupabaseResult;
+
       if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Account created successfully! Welcome to the community!');
-        navigate('/');
+        const errObj = error as { status?: number; statusCode?: number; message?: string } | null;
+        const status = errObj?.status ?? errObj?.statusCode;
+        if (status === 401) {
+          toast.error('Sign up failed due to permissions. Check Supabase RLS/policies for the users table.');
+        } else {
+          toast.error(errObj?.message || 'Sign up failed');
+        }
+        return;
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+
+      // Successful sign up. Many Supabase projects require email confirmation so we shouldn't assume a session exists.
+      toast.success('Account created! Please check your email to confirm (if required).');
+
+      // Switch to sign-in UI and pre-fill the email so the user can sign in after confirming.
+      setIsSignUp(false);
+      try {
+        signInForm.setValue('email', data.email);
+      } catch (e) {
+        // ignore if setValue not available for any reason
+      }
+    } catch (err) {
+      console.error('[AuthPage] signUp error', err);
       toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);

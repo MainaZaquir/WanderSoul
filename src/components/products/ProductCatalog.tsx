@@ -177,10 +177,10 @@ export function ProductCatalog() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="all">All Prices</option>
-                    <option value="0-1000">Under $1,000</option>
-                    <option value="1000-3000">$1,000 - $3,000</option>
-                    <option value="3000-5000">$3,000 - $5,000</option>
-                    <option value="5000-999999">Over $5,000</option>
+                    <option value="0-50000">Under KSh 50,000</option>
+                    <option value="50000-150000">KSh 50,000 - KSh 150,000</option>
+                    <option value="150000-250000">KSh 150,000 - KSh 250,000</option>
+                    <option value="250000-999999999">Over KSh 250,000</option>
                   </select>
                 </div>
 

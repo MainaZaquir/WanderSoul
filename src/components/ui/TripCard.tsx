@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin } from 'lucide-react';
+import { formatPrice } from '../../lib/currency';
 
 interface Trip {
   id: string;
@@ -75,7 +76,7 @@ export function TripCard({ trip, index }: TripCardProps) {
           className="btn-secondary w-full justify-center"
         >
           {typeof trip.price === 'number'
-            ? `Book Now - $${trip.price.toLocaleString()}`
+            ? `Book Now - ${formatPrice(trip.price)}`
             : `Book Now - ${trip.price}`}
         </Link>
       </div>
