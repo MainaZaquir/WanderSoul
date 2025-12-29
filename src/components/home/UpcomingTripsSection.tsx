@@ -13,7 +13,7 @@ const upcomingTrips = [
     price: 'Price to be Announced',
     duration: '10',
     status: 'Available',
-    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image1.jpeg'
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/Arusha.JPG'
   },
   {
     id: '2',
