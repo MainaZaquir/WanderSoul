@@ -126,4 +126,4 @@ This project is licensed under the MIT License.
 
 ## Support
 
-For support, email muchinabrian@gmail.com or join our community discussions.
+For support, email mzaquir58@gmail.com or join our community discussions.
