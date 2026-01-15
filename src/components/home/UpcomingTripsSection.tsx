@@ -6,28 +6,17 @@ import { TripCard } from '../ui/TripCard';
 const upcomingTrips = [
   {
     id: '1',
-    title: 'Arusha, Tanzania Adventure',
-    destination: 'Arusha, Tanzania',
+    title: 'Lamu, Cultural Tour',
+    destination: 'Lamu, Kenya',
     startDate: '2026-04-10',
     endDate: '2026-04-13',
     price: 'Price to be Announced',
     duration: '3',
     status: 'Available',
-    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/Arusha.JPG'
+    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/lamu-group.jpg'
   },
   {
     id: '2',
-    title: 'Zanzibar Beach Getaway',
-    destination: 'Zanzibar, Tanzania',
-    startDate: '2026-11-20',
-    endDate: '2026-11-24',
-    price: 'Price to be Announced',
-    duration: '4',
-    status: 'Available',
-    image: 'https://hstcfojtlwsneyopuofq.supabase.co/storage/v1/object/public/images/gallery/image33.jpeg'
-  },
-  {
-    id: '3',
     title: 'Cape Town 2-7 Day Trip',
     destination: 'Cape Town, South Africa',
     startDate: '2026-07-17',

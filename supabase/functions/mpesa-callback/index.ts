@@ -1,21 +1,4 @@
-/*
-  # M-Pesa Callback Handler
-
-  1. Callback Processing
-    - Handle M-Pesa payment callbacks
-    - Validate transaction data
-    - Update payment status
-
-  2. Database Updates
-    - Update booking/order status
-    - Log transaction details
-    - Trigger confirmation notifications
-
-  3. Error Handling
-    - Handle failed payments
-    - Log callback errors
-    - Graceful error recovery
-*/
+import 'dotenv/config'
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -25,138 +8,207 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Supabase client
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 )
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+// --- Helper: STK Push ---
+async function lipaNaMpesa(phoneNumber: string, amount: number) {
+  const consumerKey = Deno.env.get('MPESA_CONSUMER_KEY') ?? ''
+  const consumerSecret = Deno.env.get('MPESA_CONSUMER_SECRET') ?? ''
+  const shortcode = Deno.env.get('MPESA_SHORTCODE') ?? ''
+  const passkey = Deno.env.get('MPESA_PASSKEY') ?? ''
+  const callbackURL = Deno.env.get('MPESA_CALLBACK_URL') ?? ''
+
+  // 1️⃣ Get access token
+  const auth = btoa(`${consumerKey}:${consumerSecret}`)
+  const tokenResp = await fetch(
+    'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+    { headers: { Authorization: `Basic ${auth}` } }
+  )
+  const { access_token } = await tokenResp.json()
+
+  // 2️⃣ Timestamp & password
+  const timestamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14)
+  const password = btoa(shortcode + passkey + timestamp)
+
+  // 3️⃣ STK Push request
+  const body = {
+    BusinessShortCode: shortcode,
+    Password: password,
+    Timestamp: timestamp,
+    TransactionType: 'CustomerPayBillOnline',
+    Amount: amount,
+    PartyA: phoneNumber,
+    PartyB: shortcode,
+    PhoneNumber: phoneNumber,
+    CallBackURL: callbackURL,
+    AccountReference: 'ORDER001',
+    TransactionDesc: 'Payment for order #001',
   }
 
+  const stkResp = await fetch(
+    'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  )
+
+  return await stkResp.json()
+}
+
+// --- Serve requests ---
+serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+
+  const url = new URL(req.url)
+
   try {
-    const callbackData = await req.json()
-    console.log('M-Pesa callback received:', callbackData)
+    // 1️⃣ Trigger payment endpoint
+    if (url.pathname === '/api/pay' && req.method === 'POST') {
+      const { phoneNumber, amount, bookingId, orderId } = await req.json()
 
-    const { Body } = callbackData
-    const { stkCallback } = Body
-
-    const checkoutRequestId = stkCallback.CheckoutRequestID
-    const merchantRequestId = stkCallback.MerchantRequestID
-    const resultCode = stkCallback.ResultCode
-    const resultDesc = stkCallback.ResultDesc
-
-    // Update transaction status
-    const { data: transaction, error: fetchError } = await supabase
-      .from('mpesa_transactions')
-      .select('*')
-      .eq('checkout_request_id', checkoutRequestId)
-      .single()
-
-    if (fetchError) {
-      console.error('Error fetching transaction:', fetchError)
-      return new Response('Transaction not found', { status: 404 })
-    }
-
-    if (resultCode === 0) {
-      // Payment successful
-      const callbackMetadata = stkCallback.CallbackMetadata?.Item || []
-      const mpesaReceiptNumber = callbackMetadata.find(item => item.Name === 'MpesaReceiptNumber')?.Value
-      const transactionDate = callbackMetadata.find(item => item.Name === 'TransactionDate')?.Value
-      const phoneNumber = callbackMetadata.find(item => item.Name === 'PhoneNumber')?.Value
-
-      // Update transaction
-      await supabase
+      // Save transaction as pending
+      const { data: transaction, error } = await supabase
         .from('mpesa_transactions')
-        .update({
-          status: 'completed',
-          mpesa_receipt_number: mpesaReceiptNumber,
-          transaction_date: transactionDate,
+        .insert({
           phone_number: phoneNumber,
-          result_desc: resultDesc,
+          amount,
+          status: 'pending',
+          booking_id: bookingId ?? null,
+          order_id: orderId ?? null,
         })
-        .eq('checkout_request_id', checkoutRequestId)
+        .select()
+        .single()
 
-      // Update booking or order
-      if (transaction.booking_id) {
-        await supabase
-          .from('bookings')
-          .update({
-            payment_status: 'completed',
-            status: 'confirmed',
-            payment_reference: mpesaReceiptNumber,
-          })
-          .eq('id', transaction.booking_id)
+      if (error) throw error
 
-        // Trigger booking confirmation
-        await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-booking-confirmation`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ bookingId: transaction.booking_id }),
-        })
-      }
+      // Trigger STK Push
+      const stkResponse = await lipaNaMpesa(phoneNumber, amount)
 
-      if (transaction.order_id) {
-        await supabase
-          .from('orders')
-          .update({
-            payment_status: 'completed',
-            status: 'processing',
-            payment_reference: mpesaReceiptNumber,
-          })
-          .eq('id', transaction.order_id)
-      }
-    } else {
-      // Payment failed
+      // Update transaction with CheckoutRequestID
       await supabase
         .from('mpesa_transactions')
-        .update({
-          status: 'failed',
-          result_desc: resultDesc,
-        })
-        .eq('checkout_request_id', checkoutRequestId)
+        .update({ checkout_request_id: stkResponse.CheckoutRequestID })
+        .eq('id', transaction.id)
 
-      // Update booking or order
-      if (transaction.booking_id) {
-        await supabase
-          .from('bookings')
-          .update({
-            payment_status: 'failed',
-            status: 'cancelled',
-          })
-          .eq('id', transaction.booking_id)
-      }
-
-      if (transaction.order_id) {
-        await supabase
-          .from('orders')
-          .update({
-            payment_status: 'failed',
-            status: 'cancelled',
-          })
-          .eq('id', transaction.order_id)
-      }
+      return new Response(JSON.stringify(stkResponse), { headers: corsHeaders })
     }
 
-    return new Response(
-      JSON.stringify({ ResultCode: 0, ResultDesc: 'Success' }),
-      {
+    // 2️⃣ Callback from M-Pesa
+    if (url.pathname === '/api/mpesa/callback' && req.method === 'POST') {
+      const callbackData = await req.json()
+      console.log('M-Pesa callback received:', callbackData)
+
+      const { Body } = callbackData
+      const { stkCallback } = Body
+
+      const checkoutRequestId = stkCallback.CheckoutRequestID
+      const merchantRequestId = stkCallback.MerchantRequestID
+      const resultCode = stkCallback.ResultCode
+      const resultDesc = stkCallback.ResultDesc
+
+      // Fetch transaction
+      const { data: transaction, error: fetchError } = await supabase
+        .from('mpesa_transactions')
+        .select('*')
+        .eq('checkout_request_id', checkoutRequestId)
+        .single()
+
+      if (fetchError) return new Response('Transaction not found', { status: 404 })
+
+      if (resultCode === 0) {
+        // Successful payment
+        const callbackMetadata = stkCallback.CallbackMetadata?.Item || []
+        const mpesaReceiptNumber = callbackMetadata.find(item => item.Name === 'MpesaReceiptNumber')?.Value
+        const transactionDate = callbackMetadata.find(item => item.Name === 'TransactionDate')?.Value
+        const phoneNumber = callbackMetadata.find(item => item.Name === 'PhoneNumber')?.Value
+
+        // Update transaction
+        await supabase
+          .from('mpesa_transactions')
+          .update({
+            status: 'completed',
+            mpesa_receipt_number: mpesaReceiptNumber,
+            transaction_date: transactionDate,
+            phone_number: phoneNumber,
+            result_desc: resultDesc,
+          })
+          .eq('checkout_request_id', checkoutRequestId)
+
+        // Update booking
+        if (transaction.booking_id) {
+          await supabase
+            .from('bookings')
+            .update({
+              payment_status: 'completed',
+              status: 'confirmed',
+              payment_reference: mpesaReceiptNumber,
+            })
+            .eq('id', transaction.booking_id)
+
+          // Optional: trigger confirmation function
+          const supabaseUrl = Deno.env.get('SUPABASE_URL')
+          const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
+          await fetch(`${supabaseUrl}/functions/v1/send-booking-confirmation`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bookingId: transaction.booking_id }),
+          })
+        }
+
+        // Update order
+        if (transaction.order_id) {
+          await supabase
+            .from('orders')
+            .update({
+              payment_status: 'completed',
+              status: 'processing',
+              payment_reference: mpesaReceiptNumber,
+            })
+            .eq('id', transaction.order_id)
+        }
+      } else {
+        // Failed payment
+        await supabase
+          .from('mpesa_transactions')
+          .update({ status: 'failed', result_desc: resultDesc })
+          .eq('checkout_request_id', checkoutRequestId)
+
+        if (transaction.booking_id) {
+          await supabase
+            .from('bookings')
+            .update({ payment_status: 'failed', status: 'cancelled' })
+            .eq('id', transaction.booking_id)
+        }
+
+        if (transaction.order_id) {
+          await supabase
+            .from('orders')
+            .update({ payment_status: 'failed', status: 'cancelled' })
+            .eq('id', transaction.order_id)
+        }
+      }
+
+      return new Response(JSON.stringify({ ResultCode: 0, ResultDesc: 'Success' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
-      }
-    )
+      })
+    }
+
+    return new Response('Not Found', { status: 404 })
   } catch (error) {
-    console.error('M-Pesa callback error:', error)
-    return new Response(
-      JSON.stringify({ ResultCode: 1, ResultDesc: 'Error processing callback' }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      }
-    )
+    console.error('Error:', error)
+    return new Response(JSON.stringify({ ResultCode: 1, ResultDesc: 'Error processing request' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
   }
 })

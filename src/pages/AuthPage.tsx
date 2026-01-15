@@ -84,7 +84,7 @@ export function AuthPage() {
   const handleSignUp = async (data: SignUpFormData) => {
     setLoading(true);
     try {
-      const result = await signUp(data.email, data.password);
+      const result = await signUp(data.email, data.password, data.fullName);
       const { error } = result as SupabaseResult;
 
       if (error) {

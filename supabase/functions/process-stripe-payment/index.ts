@@ -37,9 +37,7 @@ serve(async (req) => {
   try {
     const { amount, currency = 'kes', bookingId, orderId, metadata } = await req.json()
 
-    // Create payment intent
-    // Note: KES amounts are already in the smallest unit (shillings), not cents
-    // So we don't multiply by 100 for KES
+    
     const paymentIntent = await stripe.paymentIntents.create({
       amount: currency === 'kes' ? Math.round(amount) : Math.round(amount * 100),
       currency,

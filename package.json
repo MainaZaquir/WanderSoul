@@ -18,7 +18,10 @@
     "@stripe/stripe-js": "^7.9.0",
     "@supabase/supabase-js": "^2.57.4",
     "@types/js-cookie": "^3.0.6",
+    "body-parser": "^2.2.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.544.0",
     "react": "^18.3.1",
@@ -31,6 +34,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/express": "^5.0.6",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { X, CreditCard, Smartphone, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
+import { X, Smartphone, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { supabase, Trip } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
-import { StripePayment } from './StripePayment';
-import { MpesaPayment } from './MpesaPayment';
 import { formatPrice } from '../lib/currency';
-// import { ImageUpload, ImagePreview } from './ImageUpload';
 import toast from 'react-hot-toast';
 
 interface BookingModalProps {
@@ -25,18 +22,18 @@ const bookingSchema = yup.object({
   emergencyContact: yup.string().required('Emergency contact is required'),
   emergencyPhone: yup.string().required('Emergency phone is required'),
   specialRequests: yup.string(),
-  paymentMethod: yup.string().oneOf(['mpesa', 'stripe']).required('Payment method is required'),
+  mpesaCode: yup.string().required('M-Pesa transaction code is required'),
 });
 
 type BookingFormData = yup.InferType<typeof bookingSchema>;
 
 export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
-  const [step, setStep] = useState<'details' | 'payment' | 'confirmation'>('details');
+  const [step, setStep] = useState<'details' | 'confirmation'>('details');
   const [loading, setLoading] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
   const { user, profile } = useAuth();
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<BookingFormData>({
     resolver: yupResolver(bookingSchema) as any,
     defaultValues: {
       fullName: profile?.full_name || '',
@@ -46,9 +43,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
       emergencyPhone: profile?.emergency_phone || '',
     },
   });
-
-  const paymentMethod = watch('paymentMethod');
-
+  
   const generateBookingReference = () => {
     return `TM${Date.now().toString().slice(-8)}`;
   };
@@ -69,7 +64,8 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
             user_id: user.id,
             booking_reference: reference,
             total_amount: trip.price,
-            payment_method: data.paymentMethod,
+            payment_method: 'mpesa',
+            payment_reference: data.mpesaCode,
             special_requests: data.specialRequests,
           },
         ])
@@ -99,38 +95,12 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
 
       setBookingReference(reference);
       setStep('confirmation');
-      
-      toast.success('Booking created successfully!');
+      toast.success('Booking submitted! We will confirm your payment and booking shortly.');
       console.log('Booking created:', booking);
       
     } catch (error) {
       console.error('Error creating booking:', error);
       toast.error('Failed to create booking. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleStripeSuccess = async () => {
-    setLoading(true);
-    try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Update booking payment status
-      await supabase
-        .from('bookings')
-        .update({
-          payment_status: 'completed',
-          status: 'confirmed',
-        })
-        .eq('booking_reference', bookingReference);
-
-      toast.success('Payment successful! Booking confirmed.');
-      onSuccess();
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast.error('Payment failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -144,13 +114,11 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
             {step === 'details' && 'Book Your Adventure'}
-            {step === 'payment' && 'Payment Details'}
-            {step === 'confirmation' && 'Booking Confirmed'}
+            {step === 'confirmation' && 'Booking Submitted'}
           </h2>
             <p className="text-gray-600 mt-1">
-              {step === 'details' && 'Fill in your details to secure your spot'}
-              {step === 'payment' && 'Complete your payment to confirm booking'}
-              {step === 'confirmation' && 'Your adventure awaits!'}
+              {step === 'details' && 'Fill in your details and M-Pesa transaction code'}
+              {step === 'confirmation' && 'We will review your payment and confirm your booking'}
             </p>
           </div>
           <button
@@ -274,40 +242,32 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
 
               <div className="form-group">
                 <label className="form-label mb-4">
-                  Payment Method *
+                  M-Pesa Payment Details *
                 </label>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <label className="flex items-center p-6 border-2 border-gray-200 rounded-2xl cursor-pointer hover:border-green-300 hover:bg-green-50 transition-all duration-300 group">
-                    <input
-                      {...register('paymentMethod')}
-                      type="radio"
-                      value="mpesa"
-                      className="mr-4 w-5 h-5 text-green-600"
-                    />
-                    <Smartphone className="mr-4 text-green-600 group-hover:scale-110 transition-transform duration-300" size={28} />
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <p className="font-semibold text-lg">M-Pesa</p>
-                      <p className="text-sm text-gray-600">Pay with M-Pesa mobile money</p>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        M-Pesa Transaction Code
+                      </label>
+                      <input
+                        {...register('mpesaCode')}
+                        className="input-base font-mono"
+                        placeholder="e.g. QJT5K2ABCD"
+                      />
+                      {errors.mpesaCode && (
+                        <p className="form-error">{errors.mpesaCode.message}</p>
+                      )}
                     </div>
-                  </label>
-
-                  <label className="flex items-center p-6 border-2 border-gray-200 rounded-2xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 group">
-                    <input
-                      {...register('paymentMethod')}
-                      type="radio"
-                      value="stripe"
-                      className="mr-4 w-5 h-5 text-blue-600"
-                    />
-                    <CreditCard className="mr-4 text-blue-600 group-hover:scale-110 transition-transform duration-300" size={28} />
-                    <div>
-                      <p className="font-semibold text-lg">Credit/Debit Card</p>
-                      <p className="text-sm text-gray-600">Pay with Visa, Mastercard, etc.</p>
+                    <div className="bg-green-50 border border-green-100 rounded-2xl p-4 flex items-start space-x-3 text-sm text-green-800">
+                      <Smartphone className="mt-0.5" size={18} />
+                      <p>
+                        First pay <span className="font-semibold">{formatPrice(trip.price)}</span> to our M-Pesa till,
+                        then paste the transaction code here so we can verify and confirm your booking.
+                      </p>
                     </div>
-                  </label>
+                  </div>
                 </div>
-                {errors.paymentMethod && (
-                  <p className="form-error">{errors.paymentMethod.message}</p>
-                )}
               </div>
 
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
@@ -316,7 +276,7 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
                   <div className="text-blue-800">
                     <p className="font-semibold mb-3 text-lg">Important Information:</p>
                     <ul className="space-y-2 text-sm">
-                      <li>• Full payment is required to secure your booking</li>
+                      <li>• Full payment via M-Pesa is required to secure your booking</li>
                       <li>• Cancellation policy applies (see terms & conditions)</li>
                       <li>• You will receive booking confirmation via email and WhatsApp</li>
                     </ul>
@@ -337,50 +297,10 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
                   disabled={loading}
                   className="btn-secondary disabled:opacity-50"
                 >
-                  {loading ? 'Processing...' : 'Continue to Payment'}
+                  {loading ? 'Submitting...' : 'Submit Booking Request'}
                 </button>
               </div>
             </form>
-          )}
-
-          {step === 'payment' && (
-            <div className="space-y-8">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold mb-3">Complete Your Payment</h3>
-                <p className="text-gray-600">Booking Reference: <span className="font-mono font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-lg">{bookingReference}</span></p>
-              </div>
-
-              {paymentMethod === 'mpesa' && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-8 rounded-2xl border border-green-200">
-                  <MpesaPayment
-                    amount={trip.price}
-                    bookingId={bookingReference}
-                    onSuccess={handleStripeSuccess}
-                    onError={(error) => toast.error(error)}
-                  />
-                </div>
-              )}
-
-              {paymentMethod === 'stripe' && (
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-200">
-                  <StripePayment
-                    amount={trip.price}
-                    bookingId={bookingReference}
-                    onSuccess={handleStripeSuccess}
-                    onError={(error) => toast.error(error)}
-                  />
-                </div>
-              )}
-
-              <div className="flex justify-end space-x-6 pt-4">
-                <button
-                  onClick={() => setStep('details')}
-                  className="btn-outline"
-                >
-                  Back
-                </button>
-              </div>
-            </div>
           )}
 
           {step === 'confirmation' && (
@@ -392,9 +312,10 @@ export function BookingModal({ trip, onClose, onSuccess }: BookingModalProps) {
               </div>
               
               <div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h3>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">Booking Submitted!</h3>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  Your adventure is booked and confirmed. You'll receive detailed information via email and WhatsApp.
+                  We’ve received your booking details and M-Pesa code. Once we manually verify the payment, we’ll
+                  confirm your booking and send you all the details via email and WhatsApp.
                 </p>
               </div>
 

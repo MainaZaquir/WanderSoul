@@ -44,16 +44,13 @@ function PaymentForm({ amount, bookingId, orderId, onSuccess, onError }: StripeP
     setLoading(true);
 
     try {
-      // Create payment intent
       const { clientSecret } = await createPaymentIntent(amount, bookingId, orderId);
 
-      // Get card element
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
         throw new Error('Card element not found');
       }
 
-      // Confirm payment with Stripe
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,

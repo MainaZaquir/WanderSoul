@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Users, MapPin, ShoppingBag, MessageSquare, Award, Star, TrendingUp, Calendar, DollarSign } from 'lucide-react';
+import { Users, MapPin, ShoppingBag, MessageSquare, Award, Star, TrendingUp, Calendar, DollarSign, CheckCircle } from 'lucide-react';
 import { supabase, Trip, Product, User, Booking, Order, Review, CommunityPost, Sponsorship } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../lib/currency';
@@ -20,10 +20,10 @@ export function AdminDashboard() {
 
   // Data states
   const [users, setUsers] = useState<User[]>([]);
-  const [, setTrips] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [, setProducts] = useState<Product[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [, setSponsorships] = useState<Sponsorship[]>([]);
@@ -178,6 +178,101 @@ export function AdminDashboard() {
     }
   };
 
+  const handleConfirmOrder = async (order: Order & { user?: User }) => {
+    if (order.payment_status === 'completed') {
+      toast('Order already confirmed');
+      return;
+    }
+
+    if (!confirm(`Mark order ${order.order_reference} as paid and send confirmation?`)) return;
+
+    try {
+      // 1) Update order status in Supabase
+      const { error } = await supabase
+        .from('orders')
+        .update({
+          payment_status: 'completed',
+          status: 'processing',
+        })
+        .eq('id', order.id);
+
+      if (error) throw error;
+
+      // 2) Update local state
+      setOrders(prev =>
+        prev.map(o =>
+          o.id === order.id
+            ? { ...o, payment_status: 'completed', status: 'processing' }
+            : o
+        )
+      );
+
+      // 3) Call edge function to send emails / WhatsApp
+      const adminEmail = profile?.email || 'bookings@travelwithmuchina.com';
+
+      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-order-confirmation`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order: {
+            id: order.id,
+            order_reference: order.order_reference,
+            total_amount: order.total_amount,
+            payment_status: 'completed',
+            payment_reference: order.payment_reference,
+            created_at: order.created_at,
+          },
+          user: order.user
+            ? {
+                full_name: order.user.full_name,
+                email: order.user.email,
+                phone: order.user.phone,
+              }
+            : {
+                full_name: undefined,
+                email: '',
+                phone: undefined,
+              },
+          shipping_address: order.shipping_address,
+          adminEmail,
+        }),
+      });
+
+      toast.success('Order confirmed and notification sent');
+    } catch (err) {
+      console.error('Error confirming order:', err);
+      toast.error('Failed to confirm order');
+    }
+  };
+
+  const handleUpdateTripDates = async (tripId: string, startDate: string, endDate: string) => {
+    try {
+      const { error } = await supabase
+        .from('trips')
+        .update({
+          start_date: startDate,
+          end_date: endDate,
+        })
+        .eq('id', tripId);
+
+      if (error) throw error;
+
+      setTrips(prev =>
+        prev.map(trip =>
+          trip.id === tripId ? { ...trip, start_date: startDate, end_date: endDate } : trip
+        )
+      );
+
+      toast.success('Trip dates updated');
+    } catch (err) {
+      console.error('Error updating trip dates:', err);
+      toast.error('Failed to update trip dates');
+    }
+  };
+
   if (!profile?.is_admin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -269,7 +364,7 @@ export function AdminDashboard() {
                 { id: 'overview', label: 'Overview', icon: TrendingUp },
                 { id: 'users', label: 'Users', icon: Users },
                 { id: 'trips', label: 'Trips', icon: MapPin },
-                { id: 'products', label: 'Products', icon: ShoppingBag },
+                { id: 'orders', label: 'Orders', icon: ShoppingBag },
                 { id: 'bookings', label: 'Bookings', icon: Calendar },
                 { id: 'reviews', label: 'Reviews', icon: Star },
                 { id: 'community', label: 'Community', icon: MessageSquare },
@@ -350,6 +445,80 @@ export function AdminDashboard() {
                       ))}
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'trips' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900">Trips & Dates</h2>
+                <p className="text-sm text-gray-600">
+                  Adjust trip start and end dates. Changes are saved immediately when you blur the inputs.
+                </p>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Trip
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Destination
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Start Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          End Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {trips.map((trip) => (
+                        <tr key={trip.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div className="flex flex-col">
+                              <span className="font-semibold">{trip.title}</span>
+                              <span className="text-xs text-gray-500">
+                                {trip.id}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {trip.destination}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <input
+                              type="date"
+                              defaultValue={trip.start_date?.slice(0, 10)}
+                              onBlur={(e) =>
+                                handleUpdateTripDates(
+                                  trip.id,
+                                  e.target.value || trip.start_date.slice(0, 10),
+                                  trip.end_date.slice(0, 10)
+                                )
+                              }
+                              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+                            />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <input
+                              type="date"
+                              defaultValue={trip.end_date?.slice(0, 10)}
+                              onBlur={(e) =>
+                                handleUpdateTripDates(
+                                  trip.id,
+                                  trip.start_date.slice(0, 10),
+                                  e.target.value || trip.end_date.slice(0, 10)
+                                )
+                              }
+                              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -492,6 +661,103 @@ export function AdminDashboard() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Orders Management */}
+            {activeTab === 'orders' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900">Orders</h2>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Order
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Customer
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Amount
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Payment
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {orders.map((order) => (
+                        <tr key={order.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div className="flex flex-col">
+                              <span className="font-mono font-semibold text-orange-600">
+                                {order.order_reference}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {new Date(order.created_at).toLocaleString()}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div className="flex flex-col">
+                              <span>{(order as Order & { user?: User }).user?.full_name || 'Unknown'}</span>
+                              <span className="text-xs text-gray-500">
+                                {(order as Order & { user?: User }).user?.email}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {formatPrice(order.total_amount)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div className="flex flex-col">
+                              <span className="capitalize">
+                                {order.payment_method || 'mpesa'}
+                              </span>
+                              {order.payment_reference && (
+                                <span className="text-xs font-mono text-gray-500">
+                                  {order.payment_reference}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              order.payment_status === 'completed'
+                                ? 'bg-green-100 text-green-800'
+                                : order.payment_status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {order.payment_status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <button
+                              onClick={() => handleConfirmOrder(order as Order & { user?: User })}
+                              disabled={order.payment_status === 'completed'}
+                              className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
+                                order.payment_status === 'completed'
+                                  ? 'bg-gray-100 text-gray-400 cursor-default'
+                                  : 'bg-green-100 text-green-700 hover:bg-green-200'
+                              }`}
+                            >
+                              <CheckCircle size={14} className="mr-1" />
+                              {order.payment_status === 'completed' ? 'Confirmed' : 'Confirm & Notify'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}

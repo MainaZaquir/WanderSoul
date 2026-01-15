@@ -109,13 +109,19 @@ export function useAuth() {
     }
   
     if (fullName && data?.user?.id) {
-      const { error: updateError } = await supabase
+      const { error: upsertError } = await supabase
         .from('users')
-        .update({ full_name: fullName })
-        .eq('id', data.user.id);
+        .upsert(
+          {
+            id: data.user.id,
+            email,
+            full_name: fullName,
+          },
+          { onConflict: 'id' }
+        );
   
-      if (updateError) {
-        console.error('[useAuth] error updating full name:', updateError);
+      if (upsertError) {
+        console.error('[useAuth] error creating/updating user profile during signUp:', upsertError);
       }
     }
   
@@ -135,8 +141,14 @@ export function useAuth() {
 
     const { data, error } = await supabase
       .from('users')
-      .update(updates)
-      .eq('id', user.id)
+      .upsert(
+        {
+          id: user.id,
+          email: user.email || '',
+          ...updates,
+        },
+        { onConflict: 'id' }
+      )
       .select()
       .single();
 

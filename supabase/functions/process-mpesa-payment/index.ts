@@ -1,22 +1,3 @@
-/*
-  # Process M-Pesa Payment
-
-  1. M-Pesa Integration
-    - STK Push for payment initiation
-    - Payment confirmation handling
-    - Status checking and updates
-
-  2. Security
-    - Validate M-Pesa callbacks
-    - Secure transaction processing
-    - Error handling and logging
-
-  3. Database Updates
-    - Update booking/order status
-    - Log payment transactions
-    - Trigger notifications
-*/
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 

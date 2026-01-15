@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { X, Plus, Minus, Trash2, ShoppingCart, CreditCard, Smartphone } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../hooks/useAuth';
-import { StripePayment } from './StripePayment';
-import { MpesaPayment } from './MpesaPayment';
 import { supabase } from '../lib/supabase';
 import { formatPrice } from '../lib/currency';
 import toast from 'react-hot-toast';
+import { ManualPaymentForm } from './ManualPaymentForm';
 
 interface CartModalProps {
   onClose: () => void;
@@ -15,8 +14,7 @@ interface CartModalProps {
 export function CartModal({ onClose }: CartModalProps) {
   const { cartItems, updateQuantity, removeFromCart, clearCart, getTotalPrice } = useCart();
   const { user } = useAuth();
-  const [step, setStep] = useState<'cart' | 'checkout' | 'payment'>('cart');
-  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'mpesa'>('stripe');
+  const [step, setStep] = useState<'cart' | 'checkout'>('cart');
   const [loading, setLoading] = useState(false);
   const [orderReference, setOrderReference] = useState('');
 
@@ -45,7 +43,7 @@ export function CartModal({ onClose }: CartModalProps) {
             user_id: user.id,
             order_reference: reference,
             total_amount: totalPrice,
-            payment_method: paymentMethod,
+            payment_method: 'mpesa',
             status: 'pending',
           },
         ])
@@ -70,7 +68,7 @@ export function CartModal({ onClose }: CartModalProps) {
       if (itemsError) throw itemsError;
 
       setOrderReference(reference);
-      setStep('payment');
+      setStep('checkout');
       
     } catch (error) {
       console.error('Error creating order:', error);
@@ -80,24 +78,33 @@ export function CartModal({ onClose }: CartModalProps) {
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const handleManualPaymentSubmit = async (details: {
+    fullName: string;
+    email: string;
+    phone: string;
+    mpesaCode: string;
+  }) => {
     try {
-      // Update order status
       await supabase
         .from('orders')
         .update({
-          payment_status: 'completed',
-          status: 'processing',
+          payment_reference: details.mpesaCode,
+          shipping_address: {
+            full_name: details.fullName,
+            email: details.email,
+            phone: details.phone,
+            manual_payment: true,
+          },
         })
         .eq('order_reference', orderReference);
 
       // Clear cart
       clearCart();
-      toast.success('Order placed successfully!');
+      toast.success('Order submitted! We will confirm your payment and contact you.');
       onClose();
     } catch (error) {
-      console.error('Payment success error:', error);
-      toast.error('Order completed but there was an issue. Please contact support.');
+      console.error('Manual payment submit error:', error);
+      toast.error('Failed to submit payment details. Please try again.');
     }
   };
 
@@ -130,13 +137,11 @@ export function CartModal({ onClose }: CartModalProps) {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
               {step === 'cart' && 'Shopping Cart'}
-              {step === 'checkout' && 'Checkout'}
-              {step === 'payment' && 'Payment'}
+              {step === 'checkout' && 'Checkout & Payment Details'}
             </h2>
             <p className="text-gray-600 mt-1">
               {step === 'cart' && `${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart`}
-              {step === 'checkout' && 'Review your order details'}
-              {step === 'payment' && 'Complete your purchase'}
+              {step === 'checkout' && 'Review your order and share your M-Pesa payment details'}
             </p>
           </div>
           <button
@@ -239,7 +244,7 @@ export function CartModal({ onClose }: CartModalProps) {
           </div>
         )}
 
-        {/* Checkout */}
+        {/* Checkout & Manual Payment */}
         {step === 'checkout' && (
           <div className="p-8 space-y-8">
             {/* Order Summary */}
@@ -263,48 +268,16 @@ export function CartModal({ onClose }: CartModalProps) {
               </div>
             </div>
 
-            {/* Payment Method Selection */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Payment Method</h3>
-              <div className="grid md:grid-cols-2 gap-6">
-                <label className={`flex items-center p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${
-                  paymentMethod === 'stripe' 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                }`}>
-                  <input
-                    type="radio"
-                    value="stripe"
-                    checked={paymentMethod === 'stripe'}
-                    onChange={(e) => setPaymentMethod(e.target.value as 'stripe')}
-                    className="mr-4 w-5 h-5 text-blue-600"
-                  />
-                  <CreditCard className="mr-4 text-blue-600" size={28} />
-                  <div>
-                    <p className="font-semibold text-lg">Credit/Debit Card</p>
-                    <p className="text-sm text-gray-600">Pay with Visa, Mastercard, etc.</p>
-                  </div>
-                </label>
-
-                <label className={`flex items-center p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${
-                  paymentMethod === 'mpesa' 
-                    ? 'border-green-500 bg-green-50' 
-                    : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
-                }`}>
-                  <input
-                    type="radio"
-                    value="mpesa"
-                    checked={paymentMethod === 'mpesa'}
-                    onChange={(e) => setPaymentMethod(e.target.value as 'mpesa')}
-                    className="mr-4 w-5 h-5 text-green-600"
-                  />
-                  <Smartphone className="mr-4 text-green-600" size={28} />
-                  <div>
-                    <p className="font-semibold text-lg">M-Pesa</p>
-                    <p className="text-sm text-gray-600">Pay with M-Pesa mobile money</p>
-                  </div>
-                </label>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Payment via M-Pesa Till</h3>
+              <ManualPaymentForm
+                amount={totalPrice}
+                description={orderReference || 'Cart Purchase'}
+                tillNumber="6928821"
+                initialName={user?.user_metadata?.full_name || ''}
+                initialEmail={user?.email || ''}
+                onSubmit={handleManualPaymentSubmit}
+              />
             </div>
 
             {hasPhysicalItems && (
@@ -326,46 +299,9 @@ export function CartModal({ onClose }: CartModalProps) {
               <button
                 onClick={handleCheckout}
                 disabled={loading}
-                className={`btn-primary flex-1 ${loading ? 'btn-loading' : ''}`}
+                className={`btn-secondary flex-1 ${loading ? 'btn-loading' : ''}`}
               >
-                {loading ? 'Processing...' : 'Continue to Payment'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Payment */}
-        {step === 'payment' && (
-          <div className="p-8 space-y-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-3">Complete Your Purchase</h3>
-              <p className="text-gray-600">Order Reference: <span className="font-mono font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-lg">{orderReference}</span></p>
-            </div>
-
-            {paymentMethod === 'stripe' && (
-              <StripePayment
-                amount={totalPrice}
-                orderId={orderReference}
-                onSuccess={handlePaymentSuccess}
-                onError={(error) => toast.error(error)}
-              />
-            )}
-
-            {paymentMethod === 'mpesa' && (
-              <MpesaPayment
-                amount={totalPrice}
-                orderId={orderReference}
-                onSuccess={handlePaymentSuccess}
-                onError={(error) => toast.error(error)}
-              />
-            )}
-
-            <div className="flex justify-center">
-              <button
-                onClick={() => setStep('checkout')}
-                className="btn-outline"
-              >
-                Back to Checkout
+                {loading ? 'Preparing Order...' : 'Generate Order Reference'}
               </button>
             </div>
           </div>
