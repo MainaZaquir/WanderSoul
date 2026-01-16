@@ -40,7 +40,6 @@ export function Layout({ children }: LayoutProps) {
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    // Implement search functionality
     setSearchOpen(false);
   }, []);
 
@@ -65,6 +64,28 @@ export function Layout({ children }: LayoutProps) {
                 <div className="text-xs text-gray-500 font-medium">Adventure Curator</div>
               </div>
             </Link>
+
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                  onClick={handleCartClick}
+                  className="relative p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-xl"
+                >
+                  <ShoppingCart size={22} />
+                  {totalCartItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs h-5 w-5 flex items-center justify-center rounded-full">
+                      {totalCartItems}
+                    </span>
+                  )}
+              </button>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-xl"
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-2">
@@ -99,18 +120,18 @@ export function Layout({ children }: LayoutProps) {
               </button>
 
               {/* Cart */}
-              <button
-                onClick={handleCartClick}
-                className="relative p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all duration-300"
-              >
-                <ShoppingCart size={20} />
-                {totalCartItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                    {totalCartItems}
-                  </span>
-                )}
-              </button>
-
+            <button
+              onClick={handleCartClick}
+              className="relative p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all duration-300"
+            >
+              <ShoppingCart size={20} />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs h-5 w-5 flex items-center justify-center rounded-full">
+                  {totalCartItems}
+                </span>
+              )}
+            </button>
+              
               {user ? (
                 <div className="flex items-center space-x-3">
                   {/* Notifications */}
@@ -173,19 +194,7 @@ export function Layout({ children }: LayoutProps) {
                 </div>
               )}
             </div>
-
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all duration-300"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
           </div>
-        </div>
-
         {/* Search Bar */}
         {searchOpen && (
           <div className="border-t border-gray-100 bg-white p-4 animate-slide-up">
@@ -286,6 +295,7 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </div>
         )}
+        </div>
       </nav>
 
       {/* Main Content */}

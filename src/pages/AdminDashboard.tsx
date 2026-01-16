@@ -31,7 +31,6 @@ export function AdminDashboard() {
   const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all data in parallel
       const [
         usersData,
         tripsData,
@@ -52,7 +51,6 @@ export function AdminDashboard() {
         supabase.from('sponsorships').select('*'),
       ]);
 
-      // Set data
       setUsers(usersData.data || []);
       setTrips(tripsData.data || []);
       setProducts(productsData.data || []);
@@ -62,7 +60,6 @@ export function AdminDashboard() {
       setPosts(postsData.data || []);
       setSponsorships(sponsorshipsData.data || []);
 
-      // Calculate stats
       const totalRevenue = [
         ...(bookingsData.data || []).filter(b => b.payment_status === 'completed'),
         ...(ordersData.data || []).filter(o => o.payment_status === 'completed'),
@@ -153,12 +150,10 @@ export function AdminDashboard() {
     }
 
     try {
-      // Try using the database function first (if available)
       const { error: functionError } = await supabase.rpc('promote_user_to_admin', {
         target_email: email
       });
 
-      // If function doesn't exist or fails, fall back to direct update
       if (functionError) {
         const { error } = await supabase
           .from('users')
@@ -187,7 +182,6 @@ export function AdminDashboard() {
     if (!confirm(`Mark order ${order.order_reference} as paid and send confirmation?`)) return;
 
     try {
-      // 1) Update order status in Supabase
       const { error } = await supabase
         .from('orders')
         .update({
@@ -198,7 +192,6 @@ export function AdminDashboard() {
 
       if (error) throw error;
 
-      // 2) Update local state
       setOrders(prev =>
         prev.map(o =>
           o.id === order.id
@@ -207,8 +200,7 @@ export function AdminDashboard() {
         )
       );
 
-      // 3) Call edge function to send emails / WhatsApp
-      const adminEmail = profile?.email || 'bookings@travelwithmuchina.com';
+      const adminEmail = profile?.email || 'mzaquir58@gmail.com';
 
       await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-order-confirmation`, {
         method: 'POST',
@@ -762,7 +754,6 @@ export function AdminDashboard() {
               </div>
             )}
 
-            {/* Add other tab contents as needed */}
             {activeTab === 'users' && (
               <div className="space-y-6">
                 <h2 className="text-xl font-bold text-gray-900">User Management</h2>
